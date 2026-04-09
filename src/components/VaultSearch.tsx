@@ -6,8 +6,8 @@ import { useVaultSearch } from '@/hooks/useAegis'
 
 export default function VaultSearch() {
   const { results, loading, search, clear } = useVaultSearch()
-  const [input, setInput] = useState('')
-  const [searched, setSearched] = useState(false)
+  const [input, setInput]       = useState<string>('')
+  const [searched, setSearched] = useState<boolean>(false)
 
   const handleSearch = async () => {
     if (!input.trim()) return

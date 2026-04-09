@@ -62,6 +62,12 @@ Maintain thin entrypoints. Logic must be extracted once a file exceeds approx. 1
 - **Markdown Files:** All `.md` files must be **ALL_CAPS** (e.g., `README.MD`, `CLAUDE.MD`).
 - **React Hooks:** Use **camelCase** for hook filenames (e.g., `src/hooks/useAegis.ts`, `src/hooks/useOllamaStream.ts`).
 
+### TypeScript Strictness
+
+- **No `any` types:** Never use `any`. Use `unknown` with a type guard, explicit interfaces, or `Record<string, unknown>` where the shape is dynamic.
+- **Explicit `useState` generics:** Always annotate state with its type — e.g., `useState<boolean>(false)`, `useState<string>('')`, `useState<MyType | null>(null)`. Never rely on inference alone.
+- **Explicit `useRef` generics:** Always annotate — e.g., `useRef<HTMLParagraphElement>(null)`, `useRef<AbortController | null>(null)`.
+
 ### Architectural Rules
 
 - **No Magic Strings:** All status text (e.g., "Edge Remediation Grid: Engaged") belongs in `constants/`.
