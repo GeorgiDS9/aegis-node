@@ -2,8 +2,8 @@
 
 import { useRef } from 'react'
 import { Activity, AlertTriangle, CheckCircle, Info } from 'lucide-react'
-import type { DefenseLogEntry } from './types'
-import { useDefenseLog, useStreamingAI } from './hooks'
+import type { DefenseLogEntry } from '../types'
+import { useDefenseLog, useStreamingAI } from '../hooks'
 
 const INITIAL_ENTRIES: DefenseLogEntry[] = [
   { id: '1', timestamp: '00:00:01', type: 'success', message: 'WAF Rule Update — Layer 7 filter applied' },

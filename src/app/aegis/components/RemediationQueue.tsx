@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { ChevronRight, Loader2, Terminal } from 'lucide-react'
-import type { RemediationItem } from './types'
-import { SEVERITY_STYLES } from './constants'
-import { useStreamingAI } from './hooks'
+import type { RemediationItem } from '../types'
+import { SEVERITY_STYLES } from '../constants'
+import { useStreamingAI } from '../hooks'
 
 interface Props {
   items: RemediationItem[]
