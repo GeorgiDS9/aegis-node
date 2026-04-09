@@ -1,0 +1,25 @@
+version: "3.8"
+services:
+  aegis-node:
+    build: .
+    container_name: aegis_core
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./data/aegis_vault:/app/data/vault # Local storage for LanceDB
+    environment:
+      - NODE_ENV=development
+      - OLLAMA_HOST=http://docker.internal
+    # 🧠 16GB Strategy: We cap the container to leave 12GB for macOS/Ollama
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    networks:
+      - aegis-net
+
+networks:
+  aegis-net:
+    driver: bridge
