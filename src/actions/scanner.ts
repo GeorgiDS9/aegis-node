@@ -45,9 +45,11 @@ export async function scanWatchFolder(): Promise<ScanAlert[]> {
   // New or modified files
   for (const [filePath, entry] of currentMap) {
     const base = baselineMap.get(filePath)
+    const stableId = Buffer.from(filePath).toString('base64').slice(-12)
+    
     if (!base) {
       alerts.push({
-        id:        randomUUID(),
+        id:        `new-${stableId}-${entry.mtime}`,
         file:      filePath,
         type:      'warning',
         message:   `New file detected: ${path.basename(filePath)}`,
@@ -55,7 +57,7 @@ export async function scanWatchFolder(): Promise<ScanAlert[]> {
       })
     } else if (base.size !== entry.size || base.mtime !== entry.mtime) {
       alerts.push({
-        id:        randomUUID(),
+        id:        `drift-${stableId}-${entry.mtime}`,
         file:      filePath,
         type:      'critical',
         message:   `File drift detected: ${path.basename(filePath)}`,
@@ -67,8 +69,9 @@ export async function scanWatchFolder(): Promise<ScanAlert[]> {
   // Deleted files
   for (const [filePath] of baselineMap) {
     if (!currentMap.has(filePath)) {
+      const stableId = Buffer.from(filePath).toString('base64').slice(-12)
       alerts.push({
-        id:        randomUUID(),
+        id:        `del-${stableId}`,
         file:      filePath,
         type:      'critical',
         message:   `File removed: ${path.basename(filePath)}`,
@@ -82,7 +85,7 @@ export async function scanWatchFolder(): Promise<ScanAlert[]> {
   if (alerts.length === 0) {
     return [
       {
-        id:        randomUUID(),
+        id:        'nominal-state',
         file:      WATCH_FOLDER,
         type:      'info',
         message:   'Watch folder nominal — no drift detected',

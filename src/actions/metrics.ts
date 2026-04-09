@@ -13,7 +13,16 @@ export async function getHardwareMetrics(): Promise<HardwareMetrics> {
     memoryUsedPercent: Math.round((usedMem / totalMem) * 100),
     memoryUsedGB: Math.round((usedMem / 1024 / 1024 / 1024) * 10) / 10,
     totalMemoryGB: Math.round(totalMem / 1024 / 1024 / 1024),
+    chipModel: getChipModel(),
   }
+}
+
+// Extracts the chip name from the CPU model string.
+// os.cpus()[0].model on Apple Silicon returns e.g. "Apple M4" or "Apple M3 Pro"
+function getChipModel(): string {
+  const model = os.cpus()[0]?.model ?? ''
+  const match = model.match(/Apple\s+(M\d+(?:\s+(?:Pro|Max|Ultra))?)/i)
+  return match ? `Apple ${match[1]}` : model || 'Silicon'
 }
 
 function getCpuUsagePercent(): number {
@@ -28,6 +37,7 @@ function getCpuUsagePercent(): number {
     totalIdle += cpu.times.idle
   }
 
+  if (totalTick === 0) return 0
   const idlePercent = (totalIdle / totalTick) * 100
   return Math.min(99, Math.max(1, Math.round(100 - idlePercent)))
 }
