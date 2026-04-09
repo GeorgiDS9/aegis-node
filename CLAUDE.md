@@ -20,7 +20,8 @@ Aegis is the Active Defense node of the Vanguard Protocol. It provides autonomou
   2. API/Routes
   3. Logic/Service
   4. Integration/Testing
-- **Commit Metadata:** Do not include "Co-authored-by: Claude" or any AI-attribution tags in commit messages.
+- **Commit Metadata:** never include "Co-authored-by: Claude", "Co-Authored-By:", or any AI attribution tags in commit messages.
+  - **How to apply:** Write all commit messages without any trailing attribution lines. This applies to every commit, on every branch, always.
 - **No Merges:** Pushing to remote is encouraged, but merging is restricted to the Architect (User).
 - **Modular Architecture:**
   - **Extraction:** If a component or file exceeds approximately 200 lines, extract logic into specialized sub-files within the same directory:
@@ -30,7 +31,37 @@ Aegis is the Active Defense node of the Vanguard Protocol. It provides autonomou
     - `[feature].constants.ts` (Static config/strings)
   - **Separation of Concerns:** Keep Business Logic (Services) out of the UI (Components). Use Server Actions for hardware/database execution and maintain clean, declarative JSX.
 
-## 4. Operational Commands
+## 4. Code Layout & Architecture
+
+Maintain thin entrypoints. Logic must be extracted once a file exceeds approx. 150 lines.
+
+### Directory Mapping
+
+| Area                    | Purpose                                                                       |
+| :---------------------- | :---------------------------------------------------------------------------- |
+| `src/app/`              | **Routing Only:** `page.tsx`, `layout.tsx`, `loading.tsx`. Minimal logic.     |
+| `src/actions/`          | **Server Actions:** Hardware (CPU/RAM) & AI (Ollama/Llama-3) bridge logic.    |
+| `src/components/ui/`    | **Primitives:** Tactical buttons, Hexagon icons, Progress bars.               |
+| `src/components/aegis/` | **Features:** Kinetic Queue, Defense Log, Shield Integrity cards.             |
+| `src/lib/`              | **Glue:** Ollama client initialization, LanceDB connection, formatting utils. |
+| `src/hooks/`            | **State:** Shared logic like `useAegis.ts` or `useOllamaStream.ts`.           |
+| `src/constants/`        | **Truth:** Fixed status strings, color hexes, M4 hardware caps.               |
+| `src/types/`            | **Safety:** Shared TypeScript interfaces for Remediation and Logs.            |
+
+### Naming Conventions & Hygiene
+
+- **Markdown Files:** All `.md` files must be **ALL_CAPS** (e.g., `README.MD`, `CLAUDE.MD`).
+- **React Hooks:** Use **camelCase** for hook filenames (e.g., `src/hooks/useAegis.ts`, `src/hooks/useOllamaStream.ts`).
+
+### Architectural Rules
+
+- **No Magic Strings:** All status text (e.g., "Edge Remediation Grid: Engaged") belongs in `constants/`.
+- **Pure Helpers:** Extraction into `lib/` must be file-specific (e.g., `lib/parse-logs.ts`).
+- **Path Aliases:** Strictly use `@/*` for all internal imports to maintain a clinical dependency graph.
+- **Colocation:** One-off hooks or components stay next to the feature until reuse is required across multiple routes.
+- **Server-First:** Prioritize Server Actions over Client-side fetching to protect local hardware data.
+
+## 5. Operational Commands
 
 - `npm run dev` - Start UI
 - `docker-compose up` - Start Sandbox

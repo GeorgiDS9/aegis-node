@@ -2,7 +2,11 @@
 
 **Autonomous Remediation & Multi-Layer Hardening Engine for the Vanguard Protocol.**
 
-Aegis is the active "Sword and Shield" of the ecosystem. While Vanguard observes, Aegis acts—automating threat neutralization through real-time patching, adaptive WAF rules, and self-healing infrastructure. It extends protection from the cloud perimeter down to edge hardware and kernel-level distributed systems.
+# ⬢ Aegis Node
+
+**While Vanguard provides passive observation and reconnaissance, Aegis executes autonomous remediation and perimeter hardening at the edge.**
+
+Aegis is the **Active Remediation Node** of the ecosystem. It turns Vanguard's intelligence into automated threat neutralization through real-time patching, adaptive WAF rules, and self-healing infrastructure. It extends protection from the cloud perimeter down to edge hardware and kernel-level distributed systems on Apple Silicon (M4).
 
 ---
 
@@ -10,6 +14,7 @@ Aegis is the active "Sword and Shield" of the ecosystem. While Vanguard observes
 
 - **Ecosystem:** Vanguard Protocol
 - **Role:** Active Defense / Autonomous Remediation
+- **Primary Environment:** Apple Silicon (M4) Edge Node **(macOS Native)**
 - **Iconic Anchor:** Black Hexagon (The Matrix) ⬢
 - **Visual DNA:** Electric Shield (Electric Violet `#8b5cf6` / Obsidian Glass)
 - **Primary Environment:** Apple Silicon (M4) Edge Node
