@@ -5,12 +5,17 @@ import {
   Activity,
   Lock,
   Crosshair,
-  ChevronRight,
-  Terminal,
 } from "lucide-react";
-import Link from "next/link";
+import { getHardwareMetrics } from "@/actions/metrics";
+import { REMEDIATION_QUEUE } from "@/types/aegis";
+import RemediationQueue from "@/components/RemediationQueue";
+import DefenseLog from "@/components/DefenseLog";
 
-export default function AegisNodePage() {
+export const dynamic = "force-dynamic";
+
+export default async function AegisNodePage() {
+  const metrics = await getHardwareMetrics();
+
   return (
     <main className="min-h-screen bg-[#020617] text-slate-100 selection:bg-violet-500/30">
       {/* 🛰️ SYSTEM HEADER: Unified with Vanguard DNA */}
@@ -88,109 +93,53 @@ export default function AegisNodePage() {
               </span>
             </div>
 
-            <div className="space-y-4">
-              {[
-                {
-                  id: "AE-2026-01",
-                  target: "Nginx 1.18",
-                  action: "Patch: CVE-2024-22024",
-                  risk: "CRITICAL",
-                },
-                {
-                  id: "AE-2026-02",
-                  target: "OpenSSL 3.0",
-                  action: "Update: Library v3.1",
-                  risk: "HIGH",
-                },
-              ].map((item, i) => (
-                <div
-                  key={i}
-                  className="group flex items-center justify-between rounded-xl border border-slate-800/40 bg-slate-950/40 p-4 transition-all hover:border-violet-500/30"
-                >
-                  <div className="flex items-center gap-6">
-                    <span className="font-mono text-[10px] text-violet-500">
-                      {item.id}
-                    </span>
-                    <div className="flex flex-col">
-                      <span className="text-xs font-black text-slate-200">
-                        {item.target}
-                      </span>
-                      <span className="text-[10px] font-bold text-slate-500 tracking-wide">
-                        {item.action}
-                      </span>
-                    </div>
-                  </div>
-                  <button className="flex items-center gap-2 rounded bg-violet-600 px-3 py-1.5 text-[9px] font-black uppercase tracking-widest text-white hover:bg-violet-500">
-                    Execute <ChevronRight className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
+            {/* ⚡ WIRED: live items + Execute streaming */}
+            <RemediationQueue items={REMEDIATION_QUEUE} />
           </div>
 
           {/* SYSTEM HEALTH CARDS */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* ⚡ WIRED: Shield Integrity → live CPU usage */}
             <div className="rounded-2xl border border-slate-800 bg-slate-900/20 p-8">
               <h3 className="mb-6 text-[11px] font-black tracking-[0.2em] uppercase text-slate-400 flex items-center gap-2">
                 <Lock className="h-4 w-4 text-violet-500" /> Shield Integrity
               </h3>
               <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-violet-500 w-[94%] shadow-[0_0_10px_rgba(139,92,246,0.5)]" />
+                <div
+                  className="h-full bg-violet-500 shadow-[0_0_10px_rgba(139,92,246,0.5)] transition-all"
+                  style={{ width: `${metrics.cpuUsagePercent}%` }}
+                />
               </div>
               <div className="mt-4 flex justify-between items-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">
                 <span>Hardened Assets: 42</span>
-                <span className="text-violet-400">94.2%</span>
+                <span className="text-violet-400">{metrics.cpuUsagePercent}%</span>
               </div>
             </div>
 
+            {/* ⚡ WIRED: Adaptive Response → live Unified Memory */}
             <div className="rounded-2xl border border-slate-800 bg-slate-900/20 p-8">
               <h3 className="mb-6 text-[11px] font-black tracking-[0.2em] uppercase text-slate-400 flex items-center gap-2">
                 <Activity className="h-4 w-4 text-fuchsia-500" /> Adaptive
                 Response
               </h3>
               <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                <div className="h-full bg-fuchsia-500 w-[78%] shadow-[0_0_10px_rgba(232,121,249,0.5)]" />
+                <div
+                  className="h-full bg-fuchsia-500 shadow-[0_0_10px_rgba(232,121,249,0.5)] transition-all"
+                  style={{ width: `${metrics.memoryUsedPercent}%` }}
+                />
               </div>
               <div className="mt-4 flex justify-between items-center text-[10px] font-bold text-slate-500 uppercase tracking-widest">
                 <span>Threat Suppression</span>
-                <span className="text-fuchsia-400">78.0%</span>
+                <span className="text-fuchsia-400">{metrics.memoryUsedPercent}%</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* 🎞️ TACTICAL SIDEBAR (Right - 3.5) */}
+        {/* ⚡ WIRED: Defense Log → live Ollama streaming */}
         <aside className="col-span-12 lg:col-span-4 space-y-6">
-          <div className="rounded-2xl border border-slate-800 bg-[#0a0f1d] p-8 lg:sticky lg:top-24">
-            <div className="mb-10 flex items-center gap-3">
-              <Terminal className="h-5 w-5 text-violet-400" />
-              <h2 className="text-[12px] font-black tracking-widest uppercase text-white">
-                Defense Log
-              </h2>
-            </div>
-
-            <div className="space-y-8 relative">
-              <div className="absolute left-2.5 top-2 h-[85%] w-px border-l border-dashed border-slate-800/60" />
-
-              {[
-                { title: "WAF Rule Update", time: "2 min ago" },
-                { title: "Library Isolated", time: "14 min ago" },
-                { title: "Patch Verified", time: "1 hour ago" },
-              ].map((log, i) => (
-                <div key={i} className="relative pl-9 group">
-                  <div className="absolute left-[-2px] top-1 h-5 w-5 rounded-full border border-slate-700 bg-[#020617] flex items-center justify-center">
-                    <div className="h-1.5 w-1.5 rounded-full bg-violet-500" />
-                  </div>
-                  <p className="text-[11px] font-black tracking-widest text-slate-200 uppercase">
-                    {log.title}
-                  </p>
-                  <p className="text-[9px] font-bold text-slate-600 uppercase mt-1">
-                    {log.time}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
+          <DefenseLog />
         </aside>
       </div>
     </main>
