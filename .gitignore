@@ -6,6 +6,7 @@ node_modules/
 # Next.js Specific
 .next/
 out/
+*.tsbuildinfo
 
 # Environment Secrets (CRITICAL: Do not push these)
 .env
