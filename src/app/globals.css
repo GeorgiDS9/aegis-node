@@ -1,0 +1,11 @@
+@import "tailwindcss"; /* This is the new Tailwind 4 way */
+
+@theme {
+  --color-violet-500: #8b5cf6;
+  --color-obsidian: #020617;
+}
+
+body {
+  background-color: var(--color-obsidian);
+  color: #f1f5f9;
+}
