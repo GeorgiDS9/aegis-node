@@ -1,207 +1,106 @@
-import { Shield, Activity, Zap, Crosshair } from "lucide-react";
-import { getHardwareMetrics } from "@/actions/metrics";
-import { REMEDIATION_QUEUE } from "@/types/aegis";
-import RemediationQueue from "@/components/RemediationQueue";
-import DefenseLog from "@/components/DefenseLog";
+import React from "react";
+import Link from "next/link";
+import { Hexagon, Zap, Shield, Cpu, Activity, ArrowRight } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-
-export default async function HybridPage() {
-  const metrics = await getHardwareMetrics();
-
+export default function AegisLanding() {
   return (
-    <main className="min-h-screen bg-[#020617] text-slate-100 selection:bg-violet-500/30">
-      {/* ── HEADER ─────────────────────────────────────────────── */}
-      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-slate-800/60 bg-slate-950/80 p-4 backdrop-blur-md">
-        <div className="flex items-center gap-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-violet-500/30 bg-violet-950/20 shadow-[0_0_15px_-3px_rgba(139,92,246,0.3)]">
-            <Shield className="h-5 w-5 text-violet-400" />
-          </div>
-          <div className="flex flex-col">
-            <h2 className="text-[12px] font-black tracking-[0.2em] uppercase text-white">
-              Aegis Node <span className="text-violet-500">v1.0</span>
-            </h2>
-            <div className="flex flex-col">
-              <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-1">
-                Edge Remediation Grid:{" "}
-                <span className="text-violet-500">MAC_SILICON // ACTIVE</span>
-              </span>
-            </div>
-          </div>
-        </div>
-        <nav className="flex items-center gap-2">
-          {/* Operational Status (Optional Breadcrumb to lead the eye) */}
-          <div className="hidden lg:flex items-center gap-2 px-4 border-r border-slate-800/60">
-            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
-              Node_Status: Online
-            </span>
-          </div>
+    <main className="min-h-screen bg-[#020617] text-white flex flex-col items-center justify-center px-6 overflow-hidden relative font-sans">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-violet-600/5 blur-[160px] rounded-full -z-10 animate-pulse" />
 
-          <button className="group flex items-center gap-3 rounded-lg border border-violet-500/30 bg-violet-600/10 px-5 py-2.5 transition-all hover:border-violet-500/60 hover:bg-violet-600/20 shadow-[0_0_20px_-5px_rgba(139,92,246,0.3)]">
-            <Zap className="h-4 w-4 text-violet-400 group-hover:scale-110 transition-transform" />
-            <div className="flex flex-col items-start leading-none gap-1.5">
-              <span className="text-[11px] font-black tracking-widest uppercase text-white">
-                Initialize Patch
-              </span>
-              <span className="text-[7px] font-black text-violet-400/60 uppercase tracking-widest">
-                Deploy Remediation
-              </span>
-            </div>
-          </button>
-        </nav>
-      </header>
-
-      {/* ── HERO ───────────────────────────────────────────────── */}
-      <section className="relative px-6 py-24 text-center overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[400px] w-[600px] bg-violet-600/5 blur-[100px] pointer-events-none" />
-        {/* ⬢ TOP SIGNATURE (Above the Main Title) */}
-        <div className="mb-6 flex justify-center">
-          <div className="flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-950/20 px-4 py-1 shadow-[0_0_15px_rgba(139,92,246,0.3)]">
-            <Zap className="h-3 w-3 text-violet-400" />
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-400">
-              Agentic AI: Phase 3 Active Remediation
-            </span>
-          </div>
-        </div>
-
-        <h1 className="text-6xl md:text-[5rem] font-black tracking-tighter uppercase text-white mb-6">
-          AEGIS{" "}
-          <span className="text-transparent bg-clip-text bg-gradient-to-b from-violet-400 to-violet-600">
-            NODE
+      {/* ⬢ TOP SIGNATURE: The Phase 3 Badge */}
+      <div className="mb-12">
+        <div className="flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-950/20 px-4 py-1.5 shadow-[0_0_20px_rgba(139,92,246,0.2)]">
+          <Zap className="h-3 w-3 text-violet-400" />
+          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-violet-400">
+            Agentic AI: Phase 3 Active Remediation
           </span>
-        </h1>
-        <p className="mt-4 text-slate-400 uppercase tracking-[0.3em] text-sm font-bold">
-          Targeted Remediation & Perimeter Hardening
-        </p>
-        <p className="mx-auto mt-6 max-w-xl text-[10px] font-black tracking-[0.2em] text-slate-500 uppercase leading-relaxed text-center opacity-80">
-          Autonomous hardware remediation for the{" "}
-          <span className="text-violet-500">Vanguard Protocol</span>.
-          Translating global intelligence into local kernel hardening.
-        </p>
-      </section>
+        </div>
+      </div>
 
-      <div className="mx-auto max-w-[1400px] px-6 pb-32 space-y-8">
-        {/* ── TOP METRICS GRID ───────────────────────────────────── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <MetricCard
-            icon={<Shield size={15} className="text-violet-400" />}
-            label="Shield Integrity"
-            value={`${metrics.cpuUsagePercent}%`}
-            sub="CPU Utilization"
-            percent={metrics.cpuUsagePercent}
-            status={metrics.cpuUsagePercent < 70 ? "nominal" : "elevated"}
-          />
-          <MetricCard
-            icon={<Activity size={15} className="text-violet-400" />}
-            label="Adaptive Response"
-            value={`${metrics.memoryUsedGB} / ${metrics.totalMemoryGB} GB`}
-            sub="Unified Memory"
-            percent={metrics.memoryUsedPercent}
-            status={metrics.memoryUsedPercent < 80 ? "nominal" : "elevated"}
-          />
-          <MetricCard
-            icon={<Zap size={15} className="text-violet-400" />}
-            label="Threat Surface"
-            value={`${REMEDIATION_QUEUE.length} ACTIVE`}
-            sub="Remediation Queue"
-            percent={100}
-            status="critical"
+      {/* ⬢ MAIN TITLE*/}
+      <h1 className="flex flex-row items-center justify-center gap-8 text-7xl md:text-[6.5rem] font-black tracking-tighter uppercase mb-12 leading-none bg-gradient-to-b from-white via-white to-white/60 bg-clip-text text-transparent">
+        <span>Aegis Node</span>
+
+        <div className="flex items-center justify-center self-center translate-y-[0.05em] relative">
+          <div className="absolute inset-0 bg-violet-600/15 blur-3xl rounded-full scale-150" />
+
+          <Shield
+            strokeWidth={1.5}
+            className="h-[4.2rem] w-[4.2rem] text-violet-400 drop-shadow-[0_0_20px_rgba(139,92,246,0.8)] relative z-10"
           />
         </div>
+      </h1>
 
-        {/* ── TACTICAL GRID: 8.5 / 3.5 SPLIT ─────────────────────── */}
-        <div className="grid grid-cols-12 gap-8">
-          <div className="col-span-12 lg:col-span-8">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/20 p-8 backdrop-blur-xl">
-              <div className="mb-8 flex items-center justify-between border-b border-slate-800/60 pb-6">
-                <div className="flex items-center gap-3">
-                  <Crosshair className="h-5 w-5 text-violet-500" />
-                  <h2 className="text-sm font-black tracking-widest uppercase text-white">
-                    Remediation Queue
-                  </h2>
-                </div>
-                <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest italic">
-                  Awaiting Operator Signature
-                </span>
-              </div>
-              <RemediationQueue items={REMEDIATION_QUEUE} />
-            </div>
-          </div>
-          <aside className="col-span-12 lg:col-span-4 space-y-6">
-            <DefenseLog />
-          </aside>
+      {/* ⬢ PRIMARY INTENT */}
+      <div className="mx-auto max-w-4xl mb-20 text-center space-y-3">
+        <p className="text-xs md:text-sm font-black tracking-[0.35em] text-slate-400 uppercase leading-relaxed">
+          Autonomous hardware remediation for the{" "}
+          <span className="text-violet-500 whitespace-nowrap">
+            Vanguard Protocol
+          </span>
+        </p>
+        <p className="text-[10px] md:text-xs font-bold tracking-[0.2em] text-slate-500 uppercase">
+          Translating global intelligence into local kernel hardening
+        </p>
+      </div>
+
+      {/* ⬢ ACTION GATE*/}
+      <div className="flex flex-col md:flex-row gap-8 mb-28">
+        {/* Primary Action */}
+        <Link
+          href="/console"
+          className="group relative px-10 py-4 bg-white text-black font-black uppercase tracking-widest text-[11px] rounded-md transition-all hover:bg-violet-600 hover:text-white flex items-center gap-3 overflow-hidden"
+        >
+          Initialize Defense Console
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+          {/* Subtle Shadow Layer */}
+          <div className="absolute -bottom-1 -right-1 h-full w-full bg-violet-500/20 -z-10 rounded-md group-hover:bg-violet-500/40 transition-colors" />
+        </Link>
+
+        {/* Secondary Action */}
+        <Link
+          href="https://github.com"
+          className="px-10 py-4 border border-slate-800 bg-slate-950/40 text-slate-400 font-black uppercase tracking-widest text-[11px] rounded-md hover:border-violet-500/50 hover:text-white transition-all"
+        >
+          Protocol Documentation
+        </Link>
+      </div>
+
+      {/* ⬢ STRATEGIC INTEL: Info Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full">
+        <div className="p-8 rounded-3xl bg-slate-900/40 border border-slate-800/50 backdrop-blur-xl group hover:border-violet-500/30 transition-all">
+          <Cpu className="h-6 w-6 text-violet-500 mb-6" />
+          <h3 className="text-xs font-black uppercase tracking-widest text-white mb-4">
+            Silicon Optimization
+          </h3>
+          <p className="text-[10px] text-slate-500 uppercase leading-relaxed font-black tracking-wider">
+            Engineered for Apple M-Series Unified Memory. Real-time inference
+            leveraging the Neural Engine.
+          </p>
+        </div>
+
+        <div className="p-8 rounded-3xl bg-slate-900/40 border border-slate-800/50 backdrop-blur-xl group hover:border-violet-500/30 transition-all">
+          <Shield className="h-6 w-6 text-violet-500 mb-6" />
+          <h3 className="text-xs font-black uppercase tracking-widest text-white mb-4">
+            Kernel Remediation
+          </h3>
+          <p className="text-[10px] text-slate-500 uppercase leading-relaxed font-black tracking-wider">
+            Direct integration with macOS security layers. Automated enforcement
+            of <span className="text-violet-500/60">pfctl</span> policies.
+          </p>
+        </div>
+
+        <div className="p-8 rounded-3xl bg-slate-900/40 border border-slate-800/50 backdrop-blur-xl group hover:border-violet-500/30 transition-all">
+          <Activity className="h-6 w-6 text-violet-500 mb-6" />
+          <h3 className="text-xs font-black uppercase tracking-widest text-white mb-4">
+            Protocol Sync
+          </h3>
+          <p className="text-[10px] text-slate-500 uppercase leading-relaxed font-black tracking-wider">
+            Continuous telemetry bridge with the Vanguard Grid. Localized action
+            from global cloud signals.
+          </p>
         </div>
       </div>
     </main>
-  );
-}
-
-// ── METRIC CARD ───────────────────────────────────────────────────
-// Content: verbatim from aegis/page.tsx
-// Border:  rounded-2xl border-slate-800 bg-slate-900/20 p-8 (app/page.tsx style)
-// Bar:     nominal → violet-to-fuchsia gradient · elevated → amber · critical → red
-
-type Status = "nominal" | "elevated" | "critical";
-
-interface MetricCardProps {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-  sub: string;
-  percent: number;
-  status: Status;
-}
-
-const STATUS_BAR: Record<Status, string> = {
-  nominal:
-    "bg-gradient-to-r from-violet-600 to-fuchsia-500 shadow-[0_0_10px_rgba(139,92,246,0.5)]",
-  elevated: "bg-amber-500",
-  critical: "bg-red-500",
-};
-
-const STATUS_BADGE: Record<Status, string> = {
-  nominal: "text-violet-400 bg-violet-500/10",
-  elevated: "text-amber-400 bg-amber-500/10",
-  critical: "text-red-400 bg-red-500/10",
-};
-
-function MetricCard({
-  icon,
-  label,
-  value,
-  sub,
-  percent,
-  status,
-}: MetricCardProps) {
-  return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/20 p-8 space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs text-slate-400 uppercase tracking-wider">
-          {icon}
-          {label}
-        </div>
-        <span
-          className={`text-xs px-2 py-0.5 rounded-full ${STATUS_BADGE[status]}`}
-        >
-          {status.toUpperCase()}
-        </span>
-      </div>
-      <div className="text-2xl font-bold text-slate-100 tabular-nums">
-        {value}
-      </div>
-      <div className="space-y-1">
-        <div className="flex justify-between text-xs text-slate-500">
-          <span>{sub}</span>
-          <span>{percent}%</span>
-        </div>
-        <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
-          <div
-            className={`h-full rounded-full ${STATUS_BAR[status]}`}
-            style={{ width: `${Math.min(100, percent)}%` }}
-          />
-        </div>
-      </div>
-    </div>
   );
 }
