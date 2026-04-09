@@ -1,8 +1,7 @@
 # ⬢ Aegis Node: Autonomous Remediation & Multi-Layer Hardening
 
-**Response Layer for the Vanguard Protocol.**
 
-**Agentic AI - Phase 3 Active Remediation | Next.js 16 | Ollama Llama-3 | Unified Memory Optimized | macOS Native Enforcement**
+**Agentic AI - Phase 3 Active Remediation | Next.js 16 | Ollama Llama-3 | Unified Memory Optimized | macOS Native Enforcement | Response Layer for the Vanguard Protocol**
 
 ## What is Aegis Node?
 
@@ -19,9 +18,6 @@ Protocol Definition: Vanguard is a decentralized intelligence grid providing rea
 - **Ecosystem:** Vanguard Protocol
 - **Role:** Active Defense / Autonomous Remediation
 - **Primary Environment:** Apple Silicon (M4) Edge Node **(macOS Native)**
-- **Iconic Anchor:** Black Hexagon (The Matrix) ⬢
-- **Visual DNA:** Electric Shield (Electric Violet `#8b5cf6` / Obsidian Glass)
-- **Primary Environment:** Apple Silicon (M4) Edge Node
 
 ## 🛠️ Technical Stack
 
@@ -32,6 +28,10 @@ Protocol Definition: Vanguard is a decentralized intelligence grid providing rea
 - **Styling:** Tailwind CSS + Lucide React
 
 ## 🖼️ Product Snapshot
+
+> Aegis Node - Landing Page
+
+### ![Aegis Node - Landing Page](./docs/assets/aegis-node-landing-page.png)
 
 > Aegis Node - Defense Console
 
