@@ -18,25 +18,33 @@ export default async function HybridPage() {
             <Shield className="h-5 w-5 text-violet-400" />
           </div>
           <div className="flex flex-col">
-            <h2 className="text-[12px] font-black tracking-widest uppercase text-white">
+            <h2 className="text-[12px] font-black tracking-[0.2em] uppercase text-white">
               Aegis Node <span className="text-violet-500">v1.0</span>
             </h2>
-            <div className="flex items-center gap-1.5">
-              <div className="h-1 w-1 rounded-full bg-violet-500 animate-pulse" />
-              <span className="text-[8px] font-bold tracking-[0.2em] uppercase text-slate-500">
-                Edge Remediation Grid: Engaged
+            <div className="flex flex-col">
+              <span className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-1">
+                Edge Remediation Grid:{" "}
+                <span className="text-violet-500">MAC_SILICON // ACTIVE</span>
               </span>
             </div>
           </div>
         </div>
         <nav className="flex items-center gap-2">
-          <button className="group flex items-center gap-3 rounded-lg border border-slate-800 bg-slate-950/40 px-4 py-2 transition-all hover:border-violet-500/50 hover:bg-violet-900/20 hover:text-violet-400 shadow-lg">
-            <Zap className="h-3.5 w-3.5 group-hover:text-violet-400" />
-            <div className="flex flex-col items-start leading-none gap-1">
-              <span className="text-[10px] font-black tracking-widest uppercase">
+          {/* Operational Status (Optional Breadcrumb to lead the eye) */}
+          <div className="hidden lg:flex items-center gap-2 px-4 border-r border-slate-800/60">
+            <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">
+              Node_Status: Online
+            </span>
+          </div>
+
+          <button className="group flex items-center gap-3 rounded-lg border border-violet-500/30 bg-violet-600/10 px-5 py-2.5 transition-all hover:border-violet-500/60 hover:bg-violet-600/20 shadow-[0_0_20px_-5px_rgba(139,92,246,0.3)]">
+            <Zap className="h-4 w-4 text-violet-400 group-hover:scale-110 transition-transform" />
+            <div className="flex flex-col items-start leading-none gap-1.5">
+              <span className="text-[11px] font-black tracking-widest uppercase text-white">
                 Initialize Patch
               </span>
-              <span className="text-[7px] font-bold text-slate-600 uppercase tracking-widest group-hover:text-violet-500/60">
+              <span className="text-[7px] font-black text-violet-400/60 uppercase tracking-widest">
                 Deploy Remediation
               </span>
             </div>
@@ -47,7 +55,7 @@ export default async function HybridPage() {
       {/* ── HERO ───────────────────────────────────────────────── */}
       <section className="relative px-6 py-24 text-center overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[400px] w-[600px] bg-violet-600/5 blur-[100px] pointer-events-none" />
-        <h1 className="text-6xl md:text-7xl font-black tracking-tighter uppercase text-white mb-6">
+        <h1 className="text-6xl md:text-[5rem] font-black tracking-tighter uppercase text-white mb-6">
           AEGIS{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-b from-violet-400 to-violet-600">
             NODE
@@ -56,9 +64,10 @@ export default async function HybridPage() {
         <p className="mt-4 text-slate-400 uppercase tracking-[0.3em] text-sm font-bold">
           Targeted Remediation & Perimeter Hardening
         </p>
-        <p className="mx-auto mt-6 max-w-xl text-xs font-medium tracking-wide text-slate-500 uppercase leading-relaxed">
-          Sword & Shield of the Vanguard Protocol. Autonomous remediation for
-          detected vulnerabilities at the hardware and kernel level.
+        <p className="mx-auto mt-6 max-w-xl text-[10px] font-black tracking-[0.2em] text-slate-500 uppercase leading-relaxed text-center opacity-80">
+          Autonomous hardware remediation for the{" "}
+          <span className="text-violet-500">Vanguard Protocol</span>.
+          Translating global intelligence into local kernel hardening.
         </p>
       </section>
 
