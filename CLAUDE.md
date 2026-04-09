@@ -20,6 +20,7 @@ Aegis is the Active Defense node of the Vanguard Protocol. It provides autonomou
   2. API/Routes
   3. Logic/Service
   4. Integration/Testing
+- **Commit Metadata:** Do not include "Co-authored-by: Claude" or any AI-attribution tags in commit messages.
 - **No Merges:** Pushing to remote is encouraged, but merging is restricted to the Architect (User).
 - **Modular Architecture:**
   - **Extraction:** If a component or file exceeds approximately 200 lines, extract logic into specialized sub-files within the same directory:
