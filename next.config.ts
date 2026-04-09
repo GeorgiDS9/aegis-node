@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* Initial grounded config */
+  // Prevent Next.js from bundling native Node.js modules
+  serverExternalPackages: ['@lancedb/lancedb'],
 };
 
 export default nextConfig;
