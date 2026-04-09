@@ -6,7 +6,7 @@ import { scanWatchFolder }    from "@/actions/scanner";
 import { initVault }          from "@/actions/vault";
 import { REMEDIATION_QUEUE }  from "@/types/aegis";
 
-import RemediationDualQueue from "@/components/remediation-queue";
+import RemediationDualQueue from "@/components/RemediationQueue2";
 import DefenseLog           from "@/components/DefenseLog";
 import VaultSearch          from "@/components/VaultSearch";
 
