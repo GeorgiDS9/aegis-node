@@ -1,7 +1,8 @@
-@import "tailwindcss"; /* This is the new Tailwind 4 way */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
-  --color-violet-500: #8b5cf6;
+:root {
   --color-obsidian: #020617;
 }
 
