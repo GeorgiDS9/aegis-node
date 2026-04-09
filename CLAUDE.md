@@ -12,6 +12,15 @@ Aegis is the Active Defense node of the Vanguard Protocol. It provides autonomou
 - **AI:** Local Ollama (Llama-3-8B-Q4) via host.docker.internal
 - **Storage:** LanceDB (Embedded Vector Store)
 
+## 2.1 Version Governance & Stability Lock
+
+**Strict Version Policy:** This project is locked to **Next.js 15 LTS** and **React 18**. Do not attempt to upgrade dependencies to Next.js 16 or React 19.
+
+- **Reasoning:** Aegis is a Phase 3 Enforcement Node. We prioritize the "Hardened Stability" of the v15 Async Request APIs and Middleware over the bleeding-edge features of v16.
+- **Memory Optimization:** v15 maintains a leaner footprint, preserving maximum Unified Memory for local Llama-3 inference on the M4.
+- **Ecosystem Parity:** While Vanguard (Phase 2) operates on v16 for cloud-scale reconnaissance, Aegis operates on v15 to ensure 100% uptime during kernel-level remediation.
+- **Constraint:** If the Agent detects an "upgrade available" notice, it must be ignored. All new code must conform to React 18 patterns (avoiding React 19 specific hooks like `useActionState`).
+
 ## 3. Development Workflow (The Sprint Protocol)
 
 - **Feature Branches:** e.g.: `feat/`, `fix/`, `refactor/`
