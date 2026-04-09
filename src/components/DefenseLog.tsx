@@ -13,7 +13,7 @@ const INITIAL_ENTRIES: DefenseLogEntry[] = [
 
 const SOURCE_TAG: Record<'EDGE' | 'CLOUD', string> = {
   EDGE:  'text-violet-400 bg-violet-500/10',
-  CLOUD: 'text-slate-500 bg-slate-700/30',
+  CLOUD: 'text-blue-400 bg-blue-500/10',
 }
 
 export default function DefenseLog() {

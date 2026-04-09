@@ -53,7 +53,9 @@ export default function VaultSearch() {
         <button
           onClick={handleSearch}
           disabled={loading || !input.trim()}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg bg-violet-600 text-[10px] font-black uppercase tracking-widest text-white hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+          className="flex items-center gap-2 px-6 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all duration-300
+            enabled:bg-violet-600 enabled:text-white enabled:shadow-[0_0_12px_rgba(139,92,246,0.3)] enabled:hover:bg-violet-500 enabled:hover:shadow-[0_0_20px_rgba(139,92,246,0.5)] enabled:active:scale-95
+            disabled:bg-violet-500/10 disabled:text-violet-500/40 disabled:border disabled:border-violet-500/20 disabled:cursor-not-allowed"
         >
           {loading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Search className="h-3.5 w-3.5" />}
           Query
