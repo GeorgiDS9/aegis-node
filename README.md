@@ -1,9 +1,8 @@
-# ⬢ Aegis Node
+# ⬢ Aegis Node: Autonomous Remediation & Multi-Layer Hardening
 
-_Agentic AI: Phase 3 Active Remediation_
+**Response Layer for the Vanguard Protocol.**
 
-**Autonomous Remediation & Multi-Layer Hardening Engine for the Vanguard Protocol**
-**Agentic AI | Phase 3 Active Remediation | Next.js 16 | Ollama Llama-3 | Unified Memory Optimized | macOS Native Enforcement**
+**Agentic AI - Phase 3 Active Remediation | Next.js 16 | Ollama Llama-3 | Unified Memory Optimized | macOS Native Enforcement**
 
 ## What is Aegis Node?
 

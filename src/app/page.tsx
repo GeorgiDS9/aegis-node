@@ -55,6 +55,16 @@ export default async function HybridPage() {
       {/* ── HERO ───────────────────────────────────────────────── */}
       <section className="relative px-6 py-24 text-center overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[400px] w-[600px] bg-violet-600/5 blur-[100px] pointer-events-none" />
+        {/* ⬢ TOP SIGNATURE (Above the Main Title) */}
+        <div className="mb-6 flex justify-center">
+          <div className="flex items-center gap-2 rounded-full border border-violet-500/30 bg-violet-950/20 px-4 py-1 shadow-[0_0_15px_rgba(139,92,246,0.3)]">
+            <Zap className="h-3 w-3 text-violet-400" />
+            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-400">
+              Agentic AI: Phase 3 Active Remediation
+            </span>
+          </div>
+        </div>
+
         <h1 className="text-6xl md:text-[5rem] font-black tracking-tighter uppercase text-white mb-6">
           AEGIS{" "}
           <span className="text-transparent bg-clip-text bg-gradient-to-b from-violet-400 to-violet-600">
