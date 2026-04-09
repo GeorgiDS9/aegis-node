@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useCallback, useRef } from 'react'
-import type { DefenseLogEntry } from '@/types/aegis'
+import type { DefenseLogEntry, VaultSearchResult } from '@/types/aegis'
+import { searchRemediations } from '@/actions/vault'
 
 export function useDefenseLog(initial: DefenseLogEntry[] = []) {
   const [entries, setEntries] = useState<DefenseLogEntry[]>(initial)
@@ -68,4 +69,29 @@ export function useStreamingAI() {
   )
 
   return { isStreaming, streamQuery }
+}
+
+export function useVaultSearch() {
+  const [results, setResults] = useState<VaultSearchResult[]>([])
+  const [loading, setLoading] = useState(false)
+  const [query, setQuery]     = useState('')
+
+  const search = useCallback(async (q: string) => {
+    if (!q.trim()) return
+    setQuery(q)
+    setLoading(true)
+    try {
+      const res = await searchRemediations(q)
+      setResults(res)
+    } finally {
+      setLoading(false)
+    }
+  }, [])
+
+  const clear = useCallback(() => {
+    setQuery('')
+    setResults([])
+  }, [])
+
+  return { query, results, loading, search, clear }
 }
