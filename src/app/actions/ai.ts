@@ -1,6 +1,6 @@
 'use server'
 
-import { queryAegisAI } from '@/lib/ollama'
+import { queryAegisAI } from '../../../lib/ollama'
 import type { AIQueryResult } from '@/app/aegis/aegis.types'
 
 export async function executeRemediation(
