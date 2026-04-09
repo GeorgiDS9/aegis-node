@@ -1,7 +1,7 @@
 'use server'
 
 import os from 'os'
-import type { HardwareMetrics } from '@/app/aegis/aegis.types'
+import type { HardwareMetrics } from '@/app/aegis/types'
 
 export async function getHardwareMetrics(): Promise<HardwareMetrics> {
   const totalMem = os.totalmem()

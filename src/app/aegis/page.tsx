@@ -2,8 +2,8 @@ import { Shield, Activity, Zap } from 'lucide-react'
 import { getHardwareMetrics } from '@/app/actions/metrics'
 import RemediationQueue from './RemediationQueue'
 import DefenseLog from './DefenseLog'
-import { REMEDIATION_QUEUE } from './aegis.constants'
-import type { HardwareMetrics } from './aegis.types'
+import { REMEDIATION_QUEUE } from './constants'
+import type { HardwareMetrics } from './types'
 
 export const dynamic = 'force-dynamic'
 

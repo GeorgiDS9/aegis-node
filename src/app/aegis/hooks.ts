@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useRef } from 'react'
-import type { DefenseLogEntry } from './aegis.types'
+import type { DefenseLogEntry } from './types'
 
 export function useDefenseLog(initial: DefenseLogEntry[] = []) {
   const [entries, setEntries] = useState<DefenseLogEntry[]>(initial)

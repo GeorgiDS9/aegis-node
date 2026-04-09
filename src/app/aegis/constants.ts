@@ -1,4 +1,4 @@
-import type { RemediationItem } from './aegis.types'
+import type { RemediationItem } from './types'
 
 export const REMEDIATION_QUEUE: RemediationItem[] = [
   {

@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { ChevronRight, Loader2, Terminal } from 'lucide-react'
-import type { RemediationItem } from './aegis.types'
-import { SEVERITY_STYLES } from './aegis.constants'
-import { useStreamingAI } from './aegis.hooks'
+import type { RemediationItem } from './types'
+import { SEVERITY_STYLES } from './constants'
+import { useStreamingAI } from './hooks'
 
 interface Props {
   items: RemediationItem[]
