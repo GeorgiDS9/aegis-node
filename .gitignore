@@ -1,0 +1,33 @@
+# Dependency Directories
+node_modules/
+/dist
+/build
+
+# Next.js Specific
+.next/
+out/
+
+# Environment Secrets (CRITICAL: Do not push these)
+.env
+.env.local
+.env.production
+.env*.local
+
+# Local AI Data & Persistence (Aegis Vault)
+data/vault/
+*.lancedb
+*.db
+
+# Docker / OrbStack
+.docker/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# MacOS System Files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
