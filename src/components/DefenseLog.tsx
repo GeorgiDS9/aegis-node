@@ -18,16 +18,19 @@ const SOURCE_TAG: Record<'EDGE' | 'CLOUD', string> = {
 
 function DefenseLog() {
   const { entries, addEntry } = useDefenseLog(INITIAL_ENTRIES)
-  const { isStreaming, streamQuery } = useStreamingAI()
+  const { streamingIds, streamQuery } = useStreamingAI()
   const liveRef        = useRef('')
   const liveDisplayRef = useRef<HTMLParagraphElement>(null)
 
+  const isScanning = streamingIds.has('PULSE-SCAN')
+
   const runThreatScan = async () => {
-    if (isStreaming) return
+    if (isScanning) return
     liveRef.current = ''
 
     await streamQuery(
-      'Perform a rapid threat surface analysis of this M4 edge node. Summarize findings in 3 bullet points.',
+      'PULSE-SCAN',
+      'Perform a rapid threat surface analysis of this M4 edge node. Summarize findings in 3 bullet points. Be concise and technical.',
       (chunk) => {
         liveRef.current += chunk
         if (liveDisplayRef.current) {
@@ -36,7 +39,6 @@ function DefenseLog() {
       },
       () => {
         addEntry({ type: 'ai', source: 'EDGE', message: liveRef.current || 'Threat scan complete.' })
-        liveRef.current = ''
         if (liveDisplayRef.current) liveDisplayRef.current.textContent = ''
       }
     )
@@ -53,17 +55,17 @@ function DefenseLog() {
         </div>
         <button
           onClick={runThreatScan}
-          disabled={isStreaming}
+          disabled={isScanning}
           className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded border border-violet-500/30 text-violet-400 hover:bg-violet-500/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
         >
-          {isStreaming ? 'Scanning…' : 'Scan Threats'}
+          {isScanning ? 'Scanning…' : 'Scan Threats'}
         </button>
       </div>
 
       <div className="space-y-6 relative">
         <div className="absolute left-2.5 top-2 h-[90%] w-px border-l border-dashed border-slate-800/60" />
 
-        {isStreaming && (
+        {isScanning && (
           <div className="relative pl-9">
             <div className="absolute left-[-2px] top-1 h-5 w-5 rounded-full border border-violet-500/50 bg-[#020617] flex items-center justify-center">
               <div className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse" />

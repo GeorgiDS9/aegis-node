@@ -11,10 +11,12 @@ import VaultSearch from "@/components/VaultSearch";
 import PerimeterHealth from "@/components/PerimeterHealth";
 import AdaptiveShield from "@/components/AdaptiveShield";
 
+import type { FirewallStatus } from "@/types/aegis";
+
 interface Props {
   initialMetrics: any;
   initialAlerts: any[];
-  initialFirewall: string;
+  initialFirewall: FirewallStatus;
 }
 
 export default function ConsoleClient({
