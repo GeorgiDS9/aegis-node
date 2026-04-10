@@ -84,15 +84,24 @@ function parseAlerts(raw: unknown): VanguardAlert[] {
 
   return list
     .filter((item): item is Record<string, unknown> => typeof item === 'object' && item !== null)
-    .map((item, i) => ({
-      id:        String(item['id']        ?? `VG-${i}-${Date.now()}`),
-      type:      toAlertType(String(item['type'] ?? item['severity'] ?? 'info')),
-      category:  toCategory(String(item['category'] ?? item['type'] ?? '')),
-      source_ip: item['source_ip'] ? String(item['source_ip']) : item['ip'] ? String(item['ip']) : undefined,
-      target:    item['target']    ? String(item['target'])    : undefined,
-      message:   String(item['message'] ?? item['description'] ?? item['title'] ?? 'Unknown threat'),
-      timestamp: String(item['timestamp'] ?? item['created_at'] ?? new Date().toISOString()),
-    }))
+    .map((item, i) => {
+      const detailString = String(item['detail'] ?? item['message'] ?? item['description'] ?? '');
+      const labelString  = String(item['label']  ?? item['title'] ?? '');
+      
+      // Extract IP if present in detail (e.g. "192.168.1.50 detected...")
+      const ipMatch = detailString.match(/(\d{1,3}\.){3}\d{1,3}/);
+      const sourceIp = ipMatch ? ipMatch[0] : (item['source_ip'] ? String(item['source_ip']) : undefined);
+
+      return {
+        id:        String(item['id']        ?? `VG-${i}-${Date.now()}`),
+        type:      toAlertType(String(item['severity'] ?? item['type'] ?? 'info')),
+        category:  toCategory(String(item['label'] ?? item['type'] ?? '')),
+        source_ip: sourceIp,
+        target:    item['target']    ? String(item['target'])    : undefined,
+        message:   labelString ? `${labelString}: ${detailString}` : (detailString || 'Unknown threat'),
+        timestamp: String(item['timestamp'] ?? item['created_at'] ?? new Date().toISOString()),
+      };
+    })
 }
 
 function toAlertType(raw: string): VanguardAlert['type'] {

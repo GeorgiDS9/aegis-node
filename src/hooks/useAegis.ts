@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import type { DefenseLogEntry, VaultSearchResult, FirewallStatus as FirewallStatusType, HardwareMetrics, ScanAlert } from "@/types/aegis";
+import type { DefenseLogEntry, VaultSearchResult, FirewallStatus as FirewallStatusType, HardwareMetrics, ScanAlert, VanguardFeedResult } from "@/types/aegis";
 import { searchRemediations } from "@/actions/vault";
 
 export function useDefenseLog(initial: DefenseLogEntry[] = []) {
@@ -112,6 +112,7 @@ interface PulseData {
   alerts: ScanAlert[]
   metrics: HardwareMetrics
   firewall: FirewallStatusType
+  vanguard: VanguardFeedResult
 }
 
 export function useAegisPulse(initial?: PulseData) {
@@ -134,7 +135,7 @@ export function useAegisPulse(initial?: PulseData) {
     return () => clearInterval(interval);
   }, []);
 
-  return data;
+  return data ?? initial;
 }
 
 export function useVaultSearch() {

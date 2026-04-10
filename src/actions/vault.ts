@@ -98,6 +98,33 @@ export async function searchRemediations(
   }
 }
 
+export async function getDefenseLogs(): Promise<VaultSearchResult[]> {
+  try {
+    const db = await getDb()
+    const table = await db.openTable(TABLE_NAME)
+    
+    type RawRow = Record<string, unknown>
+    const raw = (await table.query().limit(50).toArray()) as RawRow[]
+
+    return raw
+      .filter((r) => r['id'] !== 'VAULT-INIT')
+      .map((r) => ({
+        id:        r['id']        as string,
+        cve_id:    r['cve_id']    as string,
+        target:    r['target']    as string,
+        action:    r['action']    as string,
+        risk:      r['risk']      as string,
+        outcome:   r['outcome']   as string,
+        source:    r['source']    as 'EDGE' | 'CLOUD',
+        timestamp: r['timestamp'] as string,
+        score:     1, // Full relevance for raw history
+      }))
+  } catch (err) {
+    console.error('[VAULT] Retrieval failed:', err)
+    return []
+  }
+}
+
 // ── Generate embedding via Ollama ─────────────────────────────────
 async function generateEmbedding(text: string): Promise<number[]> {
   const base  = process.env.OLLAMA_API_URL || process.env.OLLAMA_API || 'http://localhost:11434'
