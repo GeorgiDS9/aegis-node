@@ -1,8 +1,9 @@
-import { useState, memo } from "react";
-import { Cpu, Cloud, ChevronRight, Loader2, WifiOff, ShieldAlert, Zap } from "lucide-react";
+import { memo } from "react";
+import { Cpu, Cloud, ChevronRight, Loader2, WifiOff, ShieldAlert } from "lucide-react";
 import type { ScanAlert, VanguardFeedResult, KineticCommand } from "@/types/aegis";
 import { useStreamingAI } from "@/hooks/useAegis";
 import { logRemediation } from "@/actions/vault";
+import { acknowledgeAlert } from "@/actions/scanner";
 import { buildKineticCommands } from "@/lib/kinetic-bridge";
 
 // ── UI Atoms ───────────────────────────────────────────────────────
@@ -27,9 +28,9 @@ function RemediationQueue({
   authorizedIds,
 }: Props) {
   const { streamingIds, plans, expanded, streamQuery, toggleExpand } = useStreamingAI();
-  const [mitigatedIds, setMitigatedIds] = useState<Set<string>>(new Set());
 
   const handleExecute = async (alert: ScanAlert) => {
+    const prefix = alert.id.split("-")[0] as "new" | "drift" | "del";
     await streamQuery(
       alert.id,
       `[EDGE ALERT]\nFile: ${alert.file}\nType: ${alert.type}\nMessage: ${alert.message}\n\nGenerate a concise remediation plan for this system drift.`,
@@ -45,15 +46,12 @@ function RemediationQueue({
           source: "EDGE",
           timestamp: new Date().toISOString(),
         });
-        
-        setTimeout(() => {
-          setMitigatedIds(prev => new Set([...prev, alert.id]));
-        }, 3000);
+        await acknowledgeAlert(alert.file, prefix);
       },
     );
   };
 
-  const activeAlerts = edgeAlerts.filter(a => !mitigatedIds.has(a.id));
+  const activeAlerts = edgeAlerts;
 
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 gap-8 items-stretch">
