@@ -100,8 +100,8 @@ export async function searchRemediations(
 
 // ── Generate embedding via Ollama ─────────────────────────────────
 async function generateEmbedding(text: string): Promise<number[]> {
-  const base  = process.env.OLLAMA_API  ?? 'http://localhost:11434'
-  const model = process.env.PRIMARY_MODEL ?? 'llama3:8b-instruct-q4_K_M'
+  const base  = process.env.OLLAMA_API_URL || process.env.OLLAMA_API || 'http://localhost:11434'
+  const model = process.env.OLLAMA_MODEL || process.env.PRIMARY_MODEL || 'llama3:8b-instruct-q4_K_M'
 
   try {
     const res = await fetch(`${base}/api/embeddings`, {

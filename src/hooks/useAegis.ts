@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import type { DefenseLogEntry, VaultSearchResult } from "@/types/aegis";
 import { searchRemediations } from "@/actions/vault";
 
@@ -24,29 +24,47 @@ export function useDefenseLog(initial: DefenseLogEntry[] = []) {
   return { entries, addEntry };
 }
 
+// ── GLOBAL PERSISTENT STORE (In-Memory for Session) ──────────────
+const AI_MEMORY: {
+  plans: Record<string, string>;
+  streamingIds: Set<string>;
+  expanded: Set<string>;
+} = {
+  plans: {},
+  streamingIds: new Set(),
+  expanded: new Set(),
+};
+
 export function useStreamingAI() {
-  const [isStreaming, setIsStreaming] = useState<boolean>(false);
-  const abortRef = useRef<AbortController | null>(null);
+  const [, forceUpdate] = useState({});
+  const abortRefs = useRef<Map<string, AbortController>>(new Map());
 
   const streamQuery = useCallback(
     async (
+      id: string,
       prompt: string,
       onChunk: (chunk: string) => void,
       onDone: () => void,
     ) => {
-      abortRef.current = new AbortController();
-      setIsStreaming(true);
+      const controller = new AbortController();
+      abortRefs.current.set(id, controller);
+      
+      AI_MEMORY.streamingIds.add(id);
+      AI_MEMORY.expanded.add(id); // Auto-expand on stream start
+      forceUpdate({});
 
       try {
         const res = await fetch("/api/ai/stream", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ prompt }),
-          signal: abortRef.current.signal,
+          signal: controller.signal,
         });
 
         if (!res.ok || !res.body) {
-          onChunk("AI Engine Offline — Ensure Ollama is running on Host");
+          const err = "AI Engine Offline — Ensure Ollama is running on Host";
+          AI_MEMORY.plans[id] = (AI_MEMORY.plans[id] || "") + err;
+          onChunk(err);
           onDone();
           return;
         }
@@ -57,21 +75,60 @@ export function useStreamingAI() {
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          onChunk(decoder.decode(value, { stream: true }));
+          const chunk = decoder.decode(value, { stream: true });
+          AI_MEMORY.plans[id] = (AI_MEMORY.plans[id] || "") + chunk;
+          onChunk(chunk);
+          forceUpdate({});
         }
       } catch (err: unknown) {
         if (err instanceof Error && err.name !== "AbortError") {
-          onChunk("AI Engine Offline — Ensure Ollama is running on Host");
+          const msg = "\n[ERROR: Stream Disrupted]";
+          AI_MEMORY.plans[id] = (AI_MEMORY.plans[id] || "") + msg;
+          onChunk(msg);
         }
       } finally {
-        setIsStreaming(false);
+        AI_MEMORY.streamingIds.delete(id);
+        abortRefs.current.delete(id);
+        forceUpdate({});
         onDone();
       }
     },
     [],
   );
 
-  return { isStreaming, streamQuery };
+  return { 
+    streamingIds: AI_MEMORY.streamingIds, 
+    plans: AI_MEMORY.plans,
+    expanded: AI_MEMORY.expanded,
+    streamQuery,
+    toggleExpand: (id: string) => {
+      if (AI_MEMORY.expanded.has(id)) AI_MEMORY.expanded.delete(id);
+      else AI_MEMORY.expanded.add(id);
+      forceUpdate({});
+    }
+  };
+}
+export function useAegisPulse(initial?: { alerts: any[], metrics: any, firewall: string }) {
+  const [data, setData] = useState(initial);
+
+  useEffect(() => {
+    const pulse = async () => {
+      try {
+        const res = await fetch("/api/heartbeat");
+        if (res.ok) {
+          const next = await res.json();
+          setData(next);
+        }
+      } catch (err) {
+        console.error("Pulse Failed", err);
+      }
+    };
+
+    const interval = setInterval(pulse, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return data;
 }
 
 export function useVaultSearch() {

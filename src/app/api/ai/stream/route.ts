@@ -3,8 +3,8 @@ import { NextRequest } from 'next/server'
 export async function POST(request: NextRequest) {
   const { prompt } = await request.json()
 
-  const ollamaBase = process.env.OLLAMA_API ?? 'http://localhost:11434'
-  const model = process.env.PRIMARY_MODEL ?? 'llama3:8b-instruct-q4_K_M'
+  const ollamaBase = process.env.OLLAMA_API_URL || process.env.OLLAMA_API || 'http://localhost:11434'
+  const model      = process.env.OLLAMA_MODEL     || process.env.PRIMARY_MODEL || 'llama3:8b-instruct-q4_K_M'
 
   let ollamaResponse: Response
   try {
