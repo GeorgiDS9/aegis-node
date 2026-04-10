@@ -18,6 +18,25 @@ import path from 'path'
 export type AlertPrefix = 'new' | 'drift' | 'del'
 
 /**
+ * Generates a stable, content-derived ID for a Vanguard cloud alert.
+ * Used as a fallback when the upstream API does not supply a stable id field.
+ *
+ * Hashed fields: source_ip + category + message (first 120 chars).
+ * Timestamp and index are intentionally excluded so the ID is immutable
+ * across successive feed fetches.
+ *
+ * Format: "vg-<12-char hex>"
+ */
+export function stableVanguardId(item: Record<string, unknown>): string {
+  const ip       = String(item['source_ip'] ?? '')
+  const category = String(item['label'] ?? item['type'] ?? '')
+  const message  = String(item['detail'] ?? item['message'] ?? item['description'] ?? '').slice(0, 120)
+  const content  = `${ip}|${category}|${message}`
+  const hash     = createHash('sha256').update(content).digest('hex').slice(0, 12)
+  return `vg-${hash}`
+}
+
+/**
  * Returns a stable 12-character short-hash of the normalized absolute path.
  * Used in UI labels and vault cve_id fields.
  */

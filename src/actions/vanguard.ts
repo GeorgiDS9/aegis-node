@@ -1,6 +1,7 @@
 'use server'
 
 import type { VanguardAlert, VanguardFeedResult } from '@/types/aegis'
+import { stableVanguardId } from '@/lib/alert-id'
 
 // Read from env — never exposed to the browser (Server Action)
 const apiUrl = () => process.env.VANGUARD_API_URL ?? ''
@@ -93,7 +94,7 @@ function parseAlerts(raw: unknown): VanguardAlert[] {
       const sourceIp = ipMatch ? ipMatch[0] : (item['source_ip'] ? String(item['source_ip']) : undefined);
 
       return {
-        id:        String(item['id']        ?? `VG-${i}-${Date.now()}`),
+        id:        String(item['id'] ?? stableVanguardId(item)),
         type:      toAlertType(String(item['severity'] ?? item['type'] ?? 'info')),
         category:  toCategory(String(item['label'] ?? item['type'] ?? '')),
         source_ip: sourceIp,
