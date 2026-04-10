@@ -81,3 +81,30 @@ export interface WafEvent {
   timestamp: string
 }
 
+// ── Vanguard threat feed ──────────────────────────────────────────
+export interface VanguardAlert {
+  id: string
+  type: 'critical' | 'high' | 'medium' | 'info'
+  category: 'ip_threat' | 'port_scan' | 'auth_failure' | 'malware' | 'anomaly'
+  source_ip?: string
+  target?: string
+  message: string
+  timestamp: string
+}
+
+export interface VanguardFeedResult {
+  connected: boolean
+  alerts: VanguardAlert[]
+  error?: string
+  fetchedAt: string
+}
+
+// ── Kinetic pfctl command (HITL gate) ─────────────────────────────
+export interface KineticCommand {
+  alertId: string
+  command: string
+  description: string
+  risk: 'CRITICAL' | 'HIGH' | 'MEDIUM'
+  authorized: boolean
+}
+
