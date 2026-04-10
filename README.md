@@ -39,6 +39,29 @@ Protocol Definition: Vanguard is a decentralized intelligence grid providing rea
 
 ### ![Aegis Node - Defense Console - Small devices](./docs/assets/aegis-node-defense-console-small.png)
 
+## 🔒 Safety & Isolation
+
+### Firewall Audit — Read-Only, Always
+
+`getFirewallStatus()` (`src/actions/firewall.ts`) calls `pfctl -s info` — the information-only flag. Hard constraints:
+
+- **Never** runs with `sudo`
+- **Never** uses `-e` (enable), `-d` (disable), `-f` (load ruleset), or any write flag
+- The UI shows **Auditor Mode** when elevated access is unavailable (normal in sandboxed/Docker environments)
+- The action distinguishes `Permission denied` (expected) from unexpected failures
+
+Aegis reads the perimeter — it does not own it.
+
+### Adaptive Shielding — Simulation Layer
+
+WAF rule toggles are **mock/simulation only**. No system calls, no kernel hooks, no network configuration is modified. Each toggle writes an enforcement event to LanceDB for audit trail. The **Simulation** badge in the UI makes this explicit at all times.
+
+### Vault (LanceDB)
+
+Runs embedded within the Next.js process. No external port, no remote connection, no credentials. Data stored at `data/vault/` — local only.
+
+---
+
 ## 🚀 Pre-Flight Setup
 
 ### 1. Prerequisites
