@@ -4,6 +4,7 @@ import { useState, useCallback } from 'react'
 import { Zap, X, Terminal, CheckCircle, Loader2, ShieldAlert } from 'lucide-react'
 import type { KineticCommand } from '@/types/aegis'
 import { logRemediation } from '@/actions/vault'
+import { acknowledgeCloudAlerts } from '@/actions/cloud-ack'
 
 interface Props {
   commands: KineticCommand[]
@@ -27,7 +28,8 @@ export default function PatchModal({ commands, onClose, onDeployed }: Props) {
     if (authorizedCommands.length === 0 || deploying) return
     setDeploying(true)
 
-    // Log each authorized command to vault as an enforcement event
+    // Log each authorized command to vault and persist ack to disk
+    const deployedIds = authorizedCommands.map((c) => c.alertId)
     await Promise.all(
       authorizedCommands.map((cmd) =>
         logRemediation({
@@ -42,10 +44,11 @@ export default function PatchModal({ commands, onClose, onDeployed }: Props) {
         })
       )
     )
+    await acknowledgeCloudAlerts(deployedIds)
 
     setDeploying(false)
     setDeployed(true)
-    onDeployed(authorizedCommands.map((c) => c.alertId))
+    onDeployed(deployedIds)
   }, [authorizedCommands, deploying, onDeployed])
 
   return (
