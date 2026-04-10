@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import type { DefenseLogEntry, VaultSearchResult, FirewallStatus as FirewallStatusType } from "@/types/aegis";
+import type { DefenseLogEntry, VaultSearchResult, FirewallStatus as FirewallStatusType, HardwareMetrics, ScanAlert } from "@/types/aegis";
 import { searchRemediations } from "@/actions/vault";
 
 export function useDefenseLog(initial: DefenseLogEntry[] = []) {
@@ -108,8 +108,14 @@ export function useStreamingAI() {
     }
   };
 }
-export function useAegisPulse(initial?: { alerts: any[], metrics: any, firewall: FirewallStatusType }) {
-  const [data, setData] = useState(initial);
+interface PulseData {
+  alerts: ScanAlert[]
+  metrics: HardwareMetrics
+  firewall: FirewallStatusType
+}
+
+export function useAegisPulse(initial?: PulseData) {
+  const [data, setData] = useState<PulseData | undefined>(initial);
 
   useEffect(() => {
     const pulse = async () => {

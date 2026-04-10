@@ -1,42 +1,60 @@
 "use client";
 
+import { useState, useCallback } from "react";
 import { Shield, Activity, Zap } from "lucide-react";
 import Link from "next/link";
 import { useAegisPulse } from "@/hooks/useAegis";
-import { REMEDIATION_QUEUE } from "@/constants/aegis";
 
 import RemediationQueue from "@/components/RemediationQueue";
 import DefenseLog from "@/components/DefenseLog";
 import VaultSearch from "@/components/VaultSearch";
 import PerimeterHealth from "@/components/PerimeterHealth";
 import AdaptiveShield from "@/components/AdaptiveShield";
+import PatchModal from "@/components/PatchModal";
 
-import type { FirewallStatus } from "@/types/aegis";
+import type { FirewallStatus, HardwareMetrics, ScanAlert, VanguardFeedResult, KineticCommand } from "@/types/aegis";
 
 interface Props {
-  initialMetrics: any;
-  initialAlerts: any[];
+  initialMetrics: HardwareMetrics;
+  initialAlerts: ScanAlert[];
   initialFirewall: FirewallStatus;
+  vanguardFeed: VanguardFeedResult;
 }
 
 export default function ConsoleClient({
   initialMetrics,
   initialAlerts,
   initialFirewall,
+  vanguardFeed,
 }: Props) {
+  const [authorizedCmds, setAuthorizedCmds] = useState<Map<string, KineticCommand>>(new Map());
+  const [patchModalOpen, setPatchModalOpen]  = useState<boolean>(false);
+
+  const handleAuthorize = useCallback((cmd: KineticCommand) => {
+    setAuthorizedCmds((prev) => {
+      const next = new Map(prev);
+      if (cmd.authorized) next.set(cmd.alertId, cmd);
+      else next.delete(cmd.alertId);
+      return next;
+    });
+  }, []);
+
+  const authorizedIds = new Set(authorizedCmds.keys());
+
   const data = useAegisPulse({
     alerts: initialAlerts,
     metrics: initialMetrics,
     firewall: initialFirewall,
   });
 
-  const { alerts, metrics, firewall } = data || {
+  const { alerts, metrics, firewall } = data ?? {
     alerts: initialAlerts,
     metrics: initialMetrics,
     firewall: initialFirewall,
   };
 
   return (
+    <>
     <main className="min-h-screen bg-[#020617] text-slate-100 selection:bg-violet-500/30">
       {/* ── HEADER ─────────────────────────────────────────────── */}
       <header className="sticky top-0 z-50 border-b border-slate-800/60 bg-slate-950/80 backdrop-blur-md shadow-lg">
@@ -91,7 +109,10 @@ export default function ConsoleClient({
             </p>
           </div>
 
-          <button className="group relative flex items-center gap-3 rounded-md border border-violet-500/30 bg-violet-600/10 px-5 py-3 transition-all hover:border-violet-500/60 hover:bg-violet-600/20 shadow-[0_0_20px_-5px_rgba(139,92,246,0.3)]">
+          <button
+            onClick={() => setPatchModalOpen(true)}
+            className="group relative flex items-center gap-3 rounded-md border border-violet-500/30 bg-violet-600/10 px-5 py-3 transition-all hover:border-violet-500/60 hover:bg-violet-600/20 shadow-[0_0_20px_-5px_rgba(139,92,246,0.3)]"
+          >
             <div className="absolute inset-0 bg-violet-500/5 opacity-0 group-hover:opacity-100 transition-opacity" />
             <Zap className="h-4 w-4 text-violet-400 group-hover:scale-110 transition-transform" />
             <div className="flex flex-col items-start leading-none gap-1.5">
@@ -99,7 +120,7 @@ export default function ConsoleClient({
                 Initialize Patch
               </span>
               <span className="text-[7px] font-black text-violet-400/60 uppercase tracking-widest pointer-events-none">
-                Deploy Unified Remediation
+                {authorizedIds.size > 0 ? `${authorizedIds.size} Command${authorizedIds.size > 1 ? "s" : ""} Authorized` : "Deploy Unified Remediation"}
               </span>
             </div>
           </button>
@@ -128,7 +149,7 @@ export default function ConsoleClient({
           <MetricCard
             icon={<Zap size={15} className="text-violet-400" />}
             label="Threat Surface"
-            value={`${alerts.filter((a: any) => a.type !== "info").length + REMEDIATION_QUEUE.length} ACTIVE`}
+            value={`${alerts.filter((a: ScanAlert) => a.type !== "info").length + vanguardFeed.alerts.length} ACTIVE`}
             sub="Edge + Cloud Alerts"
             percent={100}
             status="critical"
@@ -139,8 +160,10 @@ export default function ConsoleClient({
         <div className="w-full">
           <RemediationQueue
             edgeAlerts={alerts}
-            cloudItems={REMEDIATION_QUEUE}
+            vanguardFeed={vanguardFeed}
             chipModel={metrics.chipModel}
+            onAuthorize={handleAuthorize}
+            authorizedIds={authorizedIds}
           />
         </div>
 
@@ -157,6 +180,18 @@ export default function ConsoleClient({
         </div>
       </div>
     </main>
+
+    {patchModalOpen && (
+      <PatchModal
+        commands={Array.from(authorizedCmds.values())}
+        onClose={() => setPatchModalOpen(false)}
+        onDeployed={() => {
+          setAuthorizedCmds(new Map());
+          setPatchModalOpen(false);
+        }}
+      />
+    )}
+    </>
   );
 }
 
