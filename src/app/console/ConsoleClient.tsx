@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { Shield, Activity, Zap } from "lucide-react";
+import { Shield, Activity, Zap, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useAegisPulse } from "@/hooks/useAegis";
 
@@ -11,6 +11,12 @@ import VaultSearch from "@/components/VaultSearch";
 import PerimeterHealth from "@/components/PerimeterHealth";
 import AdaptiveShield from "@/components/AdaptiveShield";
 import PatchModal from "@/components/PatchModal";
+
+// ── UI Atoms ───────────────────────────────────────────────────────
+import { StatusBadge } from "@/components/ui/StatusBadge";
+import { AegisButton } from "@/components/ui/AegisButton";
+import { CardHeader } from "@/components/ui/CardHeader";
+import { AegisCard } from "@/components/ui/AegisCard";
 
 import type { FirewallStatus, HardwareMetrics, ScanAlert, VanguardFeedResult, KineticCommand } from "@/types/aegis";
 
@@ -29,6 +35,8 @@ export default function ConsoleClient({
 }: Props) {
   const [authorizedCmds, setAuthorizedCmds] = useState<Map<string, KineticCommand>>(new Map());
   const [patchModalOpen, setPatchModalOpen]  = useState<boolean>(false);
+  const [suppressedCloudIds, setSuppressedCloudIds] = useState<Set<string>>(new Set());
+  const [showToast, setShowToast] = useState<boolean>(false);
 
   const handleAuthorize = useCallback((cmd: KineticCommand) => {
     setAuthorizedCmds((prev) => {
@@ -39,18 +47,41 @@ export default function ConsoleClient({
     });
   }, []);
 
+  const handleDeployment = useCallback(() => {
+    // Add all currently authorized IDs to the suppression list
+    const deployedIds = Array.from(authorizedCmds.keys());
+    setSuppressedCloudIds(prev => {
+      const next = new Set(prev);
+      deployedIds.forEach(id => next.add(id));
+      return next;
+    });
+    setAuthorizedCmds(new Map());
+    setPatchModalOpen(false);
+    
+    // Show tactical success toast
+    setShowToast(true);
+    setTimeout(() => setShowToast(false), 4000);
+  }, [authorizedCmds]);
+
   const authorizedIds = new Set(authorizedCmds.keys());
 
   const data = useAegisPulse({
     alerts: initialAlerts,
     metrics: initialMetrics,
     firewall: initialFirewall,
+    vanguard: vanguardFeed,
   });
 
-  const { alerts, metrics, firewall } = data ?? {
+  const { alerts, metrics, firewall, vanguard } = data ?? {
     alerts: initialAlerts,
     metrics: initialMetrics,
     firewall: initialFirewall,
+    vanguard: vanguardFeed,
+  };
+
+  const filteredVanguard = {
+    ...vanguard,
+    alerts: vanguard.alerts.filter(a => !suppressedCloudIds.has(a.id))
   };
 
   return (
@@ -109,7 +140,7 @@ export default function ConsoleClient({
             </p>
           </div>
 
-          <button
+          <button 
             onClick={() => setPatchModalOpen(true)}
             className="group relative flex items-center gap-3 rounded-md border border-violet-500/30 bg-violet-600/10 px-5 py-3 transition-all hover:border-violet-500/60 hover:bg-violet-600/20 shadow-[0_0_20px_-5px_rgba(139,92,246,0.3)]"
           >
@@ -160,7 +191,7 @@ export default function ConsoleClient({
         <div className="w-full">
           <RemediationQueue
             edgeAlerts={alerts}
-            vanguardFeed={vanguardFeed}
+            vanguardFeed={filteredVanguard}
             chipModel={metrics.chipModel}
             onAuthorize={handleAuthorize}
             authorizedIds={authorizedIds}
@@ -179,16 +210,24 @@ export default function ConsoleClient({
           <AdaptiveShield />
         </div>
       </div>
+
+      {showToast && (
+        <div className="fixed bottom-12 left-1/2 -translate-x-1/2 z-[100] animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <div className="flex items-center gap-3 rounded-full border border-emerald-500/30 bg-emerald-950/80 px-6 py-3 backdrop-blur-xl shadow-[0_0_30px_-5px_rgba(16,185,129,0.4)]">
+            <CheckCircle className="h-5 w-5 text-emerald-400" />
+            <span className="text-[11px] font-black uppercase tracking-[0.2em] text-emerald-100">
+              Kinetic_Commitment: Successful
+            </span>
+          </div>
+        </div>
+      )}
     </main>
 
     {patchModalOpen && (
       <PatchModal
         commands={Array.from(authorizedCmds.values())}
         onClose={() => setPatchModalOpen(false)}
-        onDeployed={() => {
-          setAuthorizedCmds(new Map());
-          setPatchModalOpen(false);
-        }}
+        onDeployed={handleDeployment}
       />
     )}
     </>
@@ -221,27 +260,29 @@ const STATUS_BADGE: Record<Status, string> = {
 
 function MetricCard({ icon, label, value, sub, percent, status }: MetricCardProps) {
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/20 p-8 space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs text-slate-400 uppercase tracking-wider">
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/20 p-6 flex flex-col justify-between">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-2 text-[13px] font-medium text-slate-400 uppercase tracking-wider">
           {icon}
           {label}
         </div>
-        <span className={`text-xs px-2 py-0.5 rounded-full ${STATUS_BADGE[status]}`}>
-          {status.toUpperCase()}
+        <span className={`text-xs font-medium uppercase px-3 py-1 rounded-full border tracking-wide leading-none flex items-center justify-center ${STATUS_BADGE[status]}`}>
+          {status}
         </span>
       </div>
-      <div className="text-2xl font-bold text-slate-100 tabular-nums">{value}</div>
-      <div className="space-y-1">
-        <div className="flex justify-between text-xs text-slate-500">
-          <span>{sub}</span>
-          <span>{percent}%</span>
-        </div>
-        <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
-          <div
-            className={`h-full rounded-full ${STATUS_BAR[status]}`}
-            style={{ width: `${Math.min(100, percent)}%` }}
-          />
+      <div>
+        <div className="text-3xl font-bold text-slate-100 tabular-nums mb-3">{value}</div>
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs font-medium text-slate-500">
+            <span>{sub}</span>
+            <span>{percent}%</span>
+          </div>
+          <div className="h-1.5 rounded-full bg-slate-800 overflow-hidden">
+            <div
+              className={`h-full rounded-full ${STATUS_BAR[status]}`}
+              style={{ width: `${Math.min(100, percent)}%` }}
+            />
+          </div>
         </div>
       </div>
     </div>
