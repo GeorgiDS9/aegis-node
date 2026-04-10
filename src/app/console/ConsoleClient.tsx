@@ -33,9 +33,10 @@ export default function ConsoleClient({
   initialFirewall,
   vanguardFeed,
 }: Props) {
-  const [authorizedCmds, setAuthorizedCmds] = useState<Map<string, KineticCommand>>(new Map());
-  const [patchModalOpen, setPatchModalOpen]  = useState<boolean>(false);
-  const [showToast, setShowToast] = useState<boolean>(false);
+  const [authorizedCmds, setAuthorizedCmds]     = useState<Map<string, KineticCommand>>(new Map());
+  const [patchModalOpen, setPatchModalOpen]      = useState<boolean>(false);
+  const [suppressedCloudIds, setSuppressedCloudIds] = useState<Set<string>>(new Set());
+  const [showToast, setShowToast]                = useState<boolean>(false);
 
   const handleAuthorize = useCallback((cmd: KineticCommand) => {
     setAuthorizedCmds((prev) => {
@@ -46,7 +47,12 @@ export default function ConsoleClient({
     });
   }, []);
 
-  const handleDeployment = useCallback(() => {
+  const handleDeployment = useCallback((deployedIds: string[]) => {
+    setSuppressedCloudIds((prev) => {
+      const next = new Set(prev);
+      deployedIds.forEach((id) => next.add(id));
+      return next;
+    });
     setAuthorizedCmds(new Map());
     setPatchModalOpen(false);
     setShowToast(true);
@@ -67,6 +73,12 @@ export default function ConsoleClient({
     metrics: initialMetrics,
     firewall: initialFirewall,
     vanguard: vanguardFeed,
+  };
+
+  // Immediate client-side suppression after deploy — vault filter handles persistence on refresh
+  const filteredVanguard = {
+    ...vanguard,
+    alerts: vanguard.alerts.filter((a) => !suppressedCloudIds.has(a.id)),
   };
 
   return (
@@ -176,7 +188,7 @@ export default function ConsoleClient({
         <div className="w-full">
           <RemediationQueue
             edgeAlerts={alerts}
-            vanguardFeed={vanguard}
+            vanguardFeed={filteredVanguard}
             chipModel={metrics.chipModel}
             onAuthorize={handleAuthorize}
             authorizedIds={authorizedIds}
