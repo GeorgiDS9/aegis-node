@@ -27,7 +27,7 @@ function DefenseLog() {
 
     await streamQuery(
       'PULSE-SCAN',
-      'Perform a rapid threat surface analysis of this M4 edge node. Summarize findings in 3 bullet points. Be concise and technical.',
+      'Perform a rapid threat surface analysis of this M4 edge node. Summarize findings in 3 extremely concise bullet points. DO NOT include any headers, bold titles, or intros. Start immediately with the first bullet.',
       (chunk) => {
         liveRef.current += chunk
         if (liveDisplayRef.current) {
@@ -67,7 +67,7 @@ function DefenseLog() {
             </div>
             <div className="flex items-center gap-2 mb-0.5">
               <p className="text-[11px] font-black tracking-widest text-violet-300 uppercase">
-                AI Threat Analysis
+                AI_THREAT_SCANNING...
               </p>
               <SourceLabel source="EDGE" />
             </div>
@@ -80,15 +80,24 @@ function DefenseLog() {
 
         {entries.map((entry) => (
           <div key={entry.id} className="relative pl-9 group">
-            <div className="absolute left-[-2px] top-1 h-5 w-5 rounded-full border border-slate-700 bg-[#020617] flex items-center justify-center">
-              <div className="h-1.5 w-1.5 rounded-full bg-violet-500" />
+            <div className={`absolute left-[-2px] top-1 h-5 w-5 rounded-full border flex items-center justify-center ${
+              entry.type === 'ai' ? 'border-violet-500/50 bg-[#020617]' : 'border-slate-700 bg-[#020617]'
+            }`}>
+              <div className={`h-1.5 w-1.5 rounded-full ${entry.type === 'ai' ? 'bg-violet-400' : 'bg-violet-500'}`} />
             </div>
             <div className="flex items-center gap-2 mb-0.5">
-              <p className="text-[11px] font-black tracking-widest text-slate-200 uppercase truncate">
-                {entry.message}
+              <p className={`text-[11px] font-black tracking-widest uppercase truncate ${
+                entry.type === 'ai' ? 'text-violet-300' : 'text-slate-200'
+              }`}>
+                {entry.type === 'ai' ? 'THREAT_ANALYSIS_REPORT' : entry.message}
               </p>
               {entry.source && <SourceLabel source={entry.source} />}
             </div>
+            {entry.type === 'ai' && (
+              <p className="text-[10px] font-mono text-slate-400 mt-1 mb-2 leading-relaxed normal-case">
+                {entry.message}
+              </p>
+            )}
             <p className="text-[9px] font-bold text-slate-600 uppercase">
               {entry.timestamp}
             </p>
