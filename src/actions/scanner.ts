@@ -5,7 +5,9 @@ import path from 'path'
 import { randomUUID } from 'crypto'
 import type { ScanAlert } from '@/types/aegis'
 
-const WATCH_FOLDER    = path.resolve(process.cwd(), 'data/watch')
+const WATCH_FOLDER    = process.env.AEGIS_WATCH_PATH 
+                        ? path.resolve(process.env.AEGIS_WATCH_PATH)
+                        : path.resolve(process.cwd(), 'data/watch')
 const BASELINE_FILE   = path.resolve(process.cwd(), 'data/.scan-baseline.json')
 
 interface FileEntry {
@@ -80,9 +82,8 @@ export async function scanWatchFolder(): Promise<ScanAlert[]> {
     }
   }
 
-  await saveBaseline(current)
-
-  if (alerts.length === 0) {
+  if (alerts.length === 0 || (alerts.length === 1 && alerts[0].id === 'nominal-state')) {
+    await saveBaseline(current)
     return [
       {
         id:        'nominal-state',
@@ -110,8 +111,8 @@ async function snapshotFolder(folder: string): Promise<FileEntry[]> {
     }
 
     for (const item of items) {
-      if (item.startsWith('.')) continue        // skip hidden/baseline files
       const full = path.join(dir, item)
+      if (full === BASELINE_FILE) continue     // Strictly skip only the baseline
       try {
         const stat = await fs.stat(full)
         if (stat.isDirectory()) {
