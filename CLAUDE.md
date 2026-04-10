@@ -59,7 +59,7 @@ Maintain thin entrypoints. Logic must be extracted once a file exceeds approx. 1
 
 ### Naming Conventions & Hygiene
 
-- **Markdown Files:** All `.md` files must be **ALL_CAPS** (e.g., `README.MD`, `CLAUDE.MD`).
+- **Markdown Files:** All `.md` files must have **ALL_CAPS** names (e.g., `README.MD`, `CLAUDE.MD`). The extension itself stays lowercase (e.g., `.md`)
 - **React Hooks:** Use **camelCase** for hook filenames (e.g., `src/hooks/useAegis.ts`, `src/hooks/useOllamaStream.ts`).
 
 ### TypeScript Strictness

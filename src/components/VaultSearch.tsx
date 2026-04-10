@@ -22,7 +22,7 @@ function VaultSearch() {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/20 backdrop-blur-xl p-6">
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/20 backdrop-blur-xl p-6 h-full">
       <div className="flex items-center gap-3 mb-5">
         <Database className="h-4 w-4 text-violet-400" />
         <span className="text-[11px] font-black tracking-widest uppercase text-white">

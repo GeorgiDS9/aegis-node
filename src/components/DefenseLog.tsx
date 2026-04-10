@@ -43,7 +43,7 @@ function DefenseLog() {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-[#0a0f1d] p-8 lg:sticky lg:top-24">
+    <div className="rounded-2xl border border-slate-800 bg-[#0a0f1d] p-8 h-full lg:sticky lg:top-24">
       <div className="mb-8 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Terminal className="h-5 w-5 text-violet-400" />

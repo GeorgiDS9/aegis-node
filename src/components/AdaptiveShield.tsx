@@ -90,7 +90,7 @@ export default function AdaptiveShield() {
   const activeCount = Object.values(activeRules).filter(Boolean).length
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/20 p-6">
+    <div className="rounded-2xl border border-slate-800 bg-slate-900/20 p-6 h-full">
       <div className="flex items-center justify-between mb-5">
         <div className="flex items-center gap-3">
           <ShieldAlert className="h-4 w-4 text-violet-400" />

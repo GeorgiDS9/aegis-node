@@ -59,7 +59,7 @@ export default function AegisLanding() {
 
         {/* Secondary Action */}
         <Link
-          href="https://github.com"
+          href="https://github.com/GeorgiDS9/aegis-node"
           className="px-10 py-4 border border-slate-800 bg-slate-950/40 text-slate-400 font-black uppercase tracking-widest text-[11px] rounded-md hover:border-violet-500/50 hover:text-white transition-all"
         >
           Protocol Documentation
