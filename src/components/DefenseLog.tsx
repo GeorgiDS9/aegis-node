@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, memo } from 'react'
 import { Terminal } from 'lucide-react'
 import type { DefenseLogEntry } from '@/types/aegis'
 import { useDefenseLog, useStreamingAI } from '@/hooks/useAegis'
@@ -16,7 +16,7 @@ const SOURCE_TAG: Record<'EDGE' | 'CLOUD', string> = {
   CLOUD: 'text-blue-400 bg-blue-500/10',
 }
 
-export default function DefenseLog() {
+function DefenseLog() {
   const { entries, addEntry } = useDefenseLog(INITIAL_ENTRIES)
   const { isStreaming, streamQuery } = useStreamingAI()
   const liveRef        = useRef('')
@@ -107,3 +107,5 @@ export default function DefenseLog() {
     </div>
   )
 }
+
+export default memo(DefenseLog)

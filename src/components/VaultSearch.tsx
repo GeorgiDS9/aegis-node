@@ -1,10 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, memo } from 'react'
 import { Search, Database, X, Loader2 } from 'lucide-react'
 import { useVaultSearch } from '@/hooks/useAegis'
 
-export default function VaultSearch() {
+function VaultSearch() {
   const { results, loading, search, clear } = useVaultSearch()
   const [input, setInput]       = useState<string>('')
   const [searched, setSearched] = useState<boolean>(false)
@@ -94,3 +94,5 @@ export default function VaultSearch() {
     </div>
   )
 }
+
+export default memo(VaultSearch)
