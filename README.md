@@ -35,7 +35,11 @@ Protocol Definition: Vanguard is a decentralized intelligence grid providing rea
 
 > Aegis Node - Defense Console
 
-### ![Aegis Node - Defense Console](./docs/assets/aegis-node-defense-console.png)
+### ![Aegis Node - Defense Console - Top](./docs/assets/aegis-node-defense-console-1.png)
+
+### ![Aegis Node - Defense Console - Bottom](./docs/assets/aegis-node-defense-console-2.png)
+
+### ![Aegis Node - Defense Console - Deploy Remediation](./docs/assets/aegis-node-deploy-remediation.png)
 
 ### ![Aegis Node - Defense Console - Small devices](./docs/assets/aegis-node-defense-console-small.png)
 
