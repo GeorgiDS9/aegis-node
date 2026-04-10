@@ -35,7 +35,6 @@ export default function ConsoleClient({
 }: Props) {
   const [authorizedCmds, setAuthorizedCmds] = useState<Map<string, KineticCommand>>(new Map());
   const [patchModalOpen, setPatchModalOpen]  = useState<boolean>(false);
-  const [suppressedCloudIds, setSuppressedCloudIds] = useState<Set<string>>(new Set());
   const [showToast, setShowToast] = useState<boolean>(false);
 
   const handleAuthorize = useCallback((cmd: KineticCommand) => {
@@ -48,20 +47,11 @@ export default function ConsoleClient({
   }, []);
 
   const handleDeployment = useCallback(() => {
-    // Add all currently authorized IDs to the suppression list
-    const deployedIds = Array.from(authorizedCmds.keys());
-    setSuppressedCloudIds(prev => {
-      const next = new Set(prev);
-      deployedIds.forEach(id => next.add(id));
-      return next;
-    });
     setAuthorizedCmds(new Map());
     setPatchModalOpen(false);
-    
-    // Show tactical success toast
     setShowToast(true);
     setTimeout(() => setShowToast(false), 4000);
-  }, [authorizedCmds]);
+  }, []);
 
   const authorizedIds = new Set(authorizedCmds.keys());
 
@@ -77,11 +67,6 @@ export default function ConsoleClient({
     metrics: initialMetrics,
     firewall: initialFirewall,
     vanguard: vanguardFeed,
-  };
-
-  const filteredVanguard = {
-    ...vanguard,
-    alerts: vanguard.alerts.filter(a => !suppressedCloudIds.has(a.id))
   };
 
   return (
@@ -191,7 +176,7 @@ export default function ConsoleClient({
         <div className="w-full">
           <RemediationQueue
             edgeAlerts={alerts}
-            vanguardFeed={filteredVanguard}
+            vanguardFeed={vanguard}
             chipModel={metrics.chipModel}
             onAuthorize={handleAuthorize}
             authorizedIds={authorizedIds}
