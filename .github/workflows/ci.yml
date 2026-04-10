@@ -51,7 +51,7 @@ jobs:
         run: npm ci
 
       - name: ESLint
-        run: npm run lint
+        run: npm run audit-lint
 
   type-check:
     name: TypeScript Strict Check
