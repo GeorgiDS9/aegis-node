@@ -1,23 +1,26 @@
 import { Shield, Activity, Zap } from "lucide-react";
 import Link from "next/link";
 
-import { getHardwareMetrics } from "@/actions/metrics";
-import { scanWatchFolder }    from "@/actions/scanner";
-import { initVault }          from "@/actions/vault";
-import { REMEDIATION_QUEUE } from "@/constants/aegis";
+import { getHardwareMetrics }  from "@/actions/metrics";
+import { scanWatchFolder }     from "@/actions/scanner";
+import { initVault }           from "@/actions/vault";
+import { getFirewallStatus }   from "@/actions/firewall";
+import { REMEDIATION_QUEUE }  from "@/constants/aegis";
 
 import RemediationDualQueue from "@/components/RemediationQueue";
 import DefenseLog           from "@/components/DefenseLog";
 import VaultSearch          from "@/components/VaultSearch";
+import PerimeterHealth      from "@/components/PerimeterHealth";
+import AdaptiveShield       from "@/components/AdaptiveShield";
 
 export const dynamic = "force-dynamic";
 
 export default async function ConsolePage() {
   // Run in parallel — vault init is idempotent
-  const [metrics, edgeAlerts, _vault] = await Promise.all([
+  const [metrics, edgeAlerts, firewall] = await Promise.all([
     getHardwareMetrics(),
     scanWatchFolder(),
-    initVault(),
+    initVault().then(() => getFirewallStatus()),
   ])
 
   return (
@@ -121,6 +124,9 @@ export default async function ConsolePage() {
           />
         </div>
 
+        {/* ── PERIMETER HEALTH ───────────────────────────────────── */}
+        <PerimeterHealth status={firewall} />
+
         {/* ── VAULT SEARCH ───────────────────────────────────────── */}
         <VaultSearch />
 
@@ -135,6 +141,7 @@ export default async function ConsolePage() {
           </div>
           <aside className="col-span-12 lg:col-span-4 space-y-6">
             <DefenseLog />
+            <AdaptiveShield />
           </aside>
         </div>
 
