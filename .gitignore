@@ -16,6 +16,7 @@ out/
 
 # Local AI Data & Persistence (Aegis Vault)
 data/vault/
+data/.scan-baseline.json
 *.lancedb
 *.db
 
