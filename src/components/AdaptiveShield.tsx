@@ -1,16 +1,12 @@
-'use client'
-
 import { useState, useCallback, memo } from 'react'
 import { ShieldAlert, Loader2 } from 'lucide-react'
 import { WAF_RULES } from '@/constants/waf-rules'
 import type { WafRule } from '@/constants/waf-rules'
 import { logRemediation } from '@/actions/vault'
-
-const RISK_BADGE: Record<WafRule['risk'], string> = {
-  CRITICAL: 'text-red-400 bg-red-500/10 border-red-500/20',
-  HIGH:     'text-amber-400 bg-amber-500/10 border-amber-500/20',
-  MEDIUM:   'text-slate-400 bg-slate-700/20 border-slate-700/40',
-}
+import { AegisCard } from './ui/AegisCard'
+import { CardHeader } from './ui/CardHeader'
+import { StatusBadge } from './ui/StatusBadge'
+import { SeverityTag } from './ui/SeverityTag'
 
 interface RuleRowProps {
   rule: WafRule
@@ -21,33 +17,33 @@ interface RuleRowProps {
 
 const RuleRow = memo(function RuleRow({ rule, enabled, logging, onToggle }: RuleRowProps) {
   return (
-    <div className="flex items-center justify-between p-3 rounded-lg bg-slate-950/40 border border-slate-800 group hover:border-slate-700 transition-all">
+    <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/40 border border-slate-800/60 group hover:border-violet-500/20 transition-all">
       <div className="flex items-center gap-3 min-w-0">
-        <div className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${enabled ? 'bg-emerald-500' : 'bg-slate-700'}`} />
+        <div className={`h-1.5 w-1.5 rounded-full flex-shrink-0 transition-all ${
+          enabled ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]' : 'bg-slate-700'
+        }`} />
         <div className="min-w-0">
-          <p className="text-[10px] font-black text-slate-200 uppercase tracking-widest">
+          <p className="text-[11px] font-black text-slate-200 uppercase tracking-widest">
             {rule.label}
           </p>
-          <p className="text-[8px] text-slate-600 mt-0.5 truncate">
+          <p className="text-[9px] text-slate-500 mt-0.5 truncate uppercase tracking-tight font-medium">
             {rule.description}
           </p>
         </div>
       </div>
 
-      <div className="flex items-center gap-3 flex-shrink-0 ml-3">
-        <span className={`text-[8px] font-black px-1.5 py-0.5 rounded border ${RISK_BADGE[rule.risk]}`}>
-          {rule.risk}
-        </span>
+      <div className="flex items-center gap-4 flex-shrink-0 ml-4">
+        <SeverityTag level={rule.risk} size="sm" />
         <button
           onClick={() => onToggle(rule)}
           disabled={logging}
           aria-label={enabled ? `Disable ${rule.label}` : `Enable ${rule.label}`}
-          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
-            enabled ? 'bg-emerald-600' : 'bg-slate-700'
+          className={`relative inline-flex h-5 w-9 items-center rounded-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${
+            enabled ? 'bg-violet-600' : 'bg-slate-800'
           }`}
         >
-          <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${
-            enabled ? 'translate-x-4' : 'translate-x-0.5'
+          <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform duration-300 ${
+            enabled ? 'translate-x-[1.375rem]' : 'translate-x-0.5'
           }`} />
         </button>
       </div>
@@ -81,7 +77,7 @@ export default function AdaptiveShield() {
     })
 
     setEventLog((prev) => [
-      `[${new Date(ts).toLocaleTimeString('en-US', { hour12: false })}] ${next ? '▲ ENABLE' : '▼ DISABLE'} ${rule.label}`,
+      `[${new Date(ts).toLocaleTimeString('en-US', { hour12: false })}] ${next ? '▲ ENFORCE' : '▼ SUSPEND'} ${rule.label}`,
       ...prev.slice(0, 4),
     ])
     setLoggingRule(null)
@@ -90,28 +86,24 @@ export default function AdaptiveShield() {
   const activeCount = Object.values(activeRules).filter(Boolean).length
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/20 p-6 h-full">
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-3">
-          <ShieldAlert className="h-4 w-4 text-violet-400" />
-          <span className="text-[11px] font-black tracking-widest uppercase text-white">
-            Adaptive Shielding
-          </span>
-        </div>
-        <div className="flex items-center gap-2">
-          {loggingRule && (
-            <Loader2 className="h-3 w-3 text-violet-400 animate-spin" />
-          )}
-          <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest">
-            {activeCount}/{WAF_RULES.length} Active
-          </span>
-          <span className="text-[8px] font-black px-1.5 py-0.5 rounded border text-violet-400 bg-violet-500/10 border-violet-500/20 tracking-widest">
-            Simulation
-          </span>
-        </div>
-      </div>
+    <AegisCard>
+      <CardHeader 
+        title="Adaptive Shielding" 
+        icon={ShieldAlert}
+        rightElement={
+          <div className="flex items-center gap-3">
+            {loggingRule && (
+              <Loader2 className="h-3.5 w-3.5 text-violet-400 animate-spin" />
+            )}
+            <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest tabular-nums">
+              {activeCount}/{WAF_RULES.length} On
+            </span>
+            <StatusBadge label="Simulation" type="default" />
+          </div>
+        }
+      />
 
-      <div className="space-y-2">
+      <div className="space-y-2 mb-6">
         {WAF_RULES.map((rule) => (
           <RuleRow
             key={rule.id}
@@ -124,17 +116,20 @@ export default function AdaptiveShield() {
       </div>
 
       {eventLog.length > 0 && (
-        <div className="mt-4 rounded-lg border border-slate-800/60 bg-slate-950/60 px-4 py-3 space-y-1">
-          <p className="text-[8px] font-black text-slate-600 uppercase tracking-widest mb-2">
-            Enforcement Log → Vault
+        <div className="rounded-xl border border-slate-800/60 bg-slate-950/40 px-4 py-3 min-h-[100px]">
+          <p className="text-[9px] font-black text-slate-600 uppercase tracking-widest mb-3 flex items-center gap-2">
+            <span className="h-1 w-1 rounded-full bg-slate-600" />
+            Transmission Log → Vault
           </p>
-          {eventLog.map((line, i) => (
-            <p key={i} className="text-[9px] font-mono text-violet-400/70 leading-relaxed">
-              {line}
-            </p>
-          ))}
+          <div className="space-y-1.5">
+            {eventLog.map((line, i) => (
+              <p key={i} className="text-[10px] font-mono text-violet-400/70 leading-relaxed truncate">
+                {line}
+              </p>
+            ))}
+          </div>
         </div>
       )}
-    </div>
+    </AegisCard>
   )
 }

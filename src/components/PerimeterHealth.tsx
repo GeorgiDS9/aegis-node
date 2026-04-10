@@ -1,5 +1,8 @@
 import { ShieldCheck, ShieldOff, Lock } from 'lucide-react'
 import type { FirewallStatus } from '@/types/aegis'
+import { AegisCard } from './ui/AegisCard'
+import { CardHeader } from './ui/CardHeader'
+import { StatusBadge } from './ui/StatusBadge'
 
 interface Props {
   status: FirewallStatus
@@ -9,67 +12,63 @@ export default function PerimeterHealth({ status }: Props) {
   const isError = Boolean(status.error)
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-900/20 p-6 h-full">
-      <div className="flex items-center justify-between mb-5">
-        <div className="flex items-center gap-3">
-          <Lock className="h-4 w-4 text-violet-400" />
-          <span className="text-[11px] font-black tracking-widest uppercase text-white">
-            Perimeter Health
-          </span>
-        </div>
-        <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded border tracking-widest ${
-          isError
-            ? 'text-blue-400 border-blue-500/30 bg-blue-500/10'
-            : 'text-slate-500 border-slate-700/60 bg-slate-800/40'
-        }`}>
-          Read-Only Auditor
-        </span>
-      </div>
+    <AegisCard>
+      <CardHeader 
+        title="Perimeter Health" 
+        icon={Lock}
+        rightElement={
+          <StatusBadge 
+            label="Read-Only Auditor" 
+            type="default" 
+          />
+        }
+      />
 
-      <div className="flex items-center gap-4">
-        <div className={`flex h-12 w-12 items-center justify-center rounded-xl border flex-shrink-0 ${
+      <div className="flex items-center gap-5 mt-2">
+        <div className={`flex h-14 w-14 items-center justify-center rounded-2xl border flex-shrink-0 transition-all ${
           isError
             ? 'border-blue-500/30 bg-blue-500/10'
             : status.enabled
-              ? 'border-emerald-500/30 bg-emerald-500/10'
-              : 'border-red-500/30 bg-red-500/10'
+              ? 'border-emerald-500/30 bg-emerald-500/10 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
+              : 'border-red-500/30 bg-red-500/10 shadow-[0_0_15px_rgba(239,68,68,0.1)]'
         }`}>
           {isError ? (
-            <Lock className="h-5 w-5 text-blue-400" />
+            <Lock className="h-6 w-6 text-blue-400" />
           ) : status.enabled ? (
-            <ShieldCheck className="h-5 w-5 text-emerald-400" />
+            <ShieldCheck className="h-6 w-6 text-emerald-400" />
           ) : (
-            <ShieldOff className="h-5 w-5 text-red-400" />
+            <ShieldOff className="h-6 w-6 text-red-400" />
           )}
         </div>
 
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <p className={`text-sm font-black uppercase tracking-widest ${
-              isError ? 'text-blue-400' : status.enabled ? 'text-emerald-400' : 'text-red-400'
+        <div className="min-w-0 flex-1 space-y-2">
+          <div className="flex items-center gap-3">
+            <p className={`text-[12px] font-black uppercase tracking-widest ${
+              isError ? 'text-blue-400/80 shadow-[0_0_10px_rgba(59,130,246,0.2)]' : status.enabled ? 'text-emerald-400/80' : 'text-red-400/80'
             }`}>
               {isError ? 'Auditor Mode' : status.enabled ? 'PF Firewall Active' : 'PF Firewall Inactive'}
             </p>
-            <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${
-              isError
-                ? 'text-blue-500 bg-blue-500/10'
-                : status.enabled
-                  ? 'text-emerald-500 bg-emerald-500/10'
-                  : 'text-red-500 bg-red-500/10'
-            }`}>
-              {isError ? 'RESTRICTED' : status.enabled ? 'ENABLED' : 'DISABLED'}
-            </span>
+            {isError && (
+              <StatusBadge label="Restricted" type="blue" size="xs" />
+            )}
+            {!isError && (
+              <StatusBadge 
+                label={status.enabled ? 'Enabled' : 'Disabled'} 
+                type={status.enabled ? 'emerald' : 'red'} 
+                size="xs" 
+              />
+            )}
           </div>
 
-          <p className="text-[9px] font-mono text-slate-600 truncate">
+          <p className="text-[10px] font-mono text-slate-500 truncate uppercase tracking-widest">
             {isError
               ? status.error
               : status.interfaces.length > 0
                 ? `Interfaces: ${status.interfaces.join(', ')}`
-                : 'pfctl -s info — no write access issued'}
+                : 'pfctl -s info // no write access issued'}
           </p>
         </div>
       </div>
-    </div>
+    </AegisCard>
   )
 }

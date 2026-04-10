@@ -1,20 +1,17 @@
-'use client'
-
 import { useRef, memo } from 'react'
-import { Terminal } from 'lucide-react'
+import { Terminal, Loader2, Zap } from 'lucide-react'
 import type { DefenseLogEntry } from '@/types/aegis'
 import { useDefenseLog, useStreamingAI } from '@/hooks/useAegis'
+import { AegisCard } from './ui/AegisCard'
+import { CardHeader } from './ui/CardHeader'
+import { AegisButton } from './ui/AegisButton'
+import { SourceLabel } from './ui/SourceLabel'
 
 const INITIAL_ENTRIES: DefenseLogEntry[] = [
   { id: '1', timestamp: '2 min ago',  type: 'success', source: 'EDGE',  message: 'WAF Rule Update' },
   { id: '2', timestamp: '14 min ago', type: 'warning', source: 'EDGE',  message: 'Library Isolated' },
   { id: '3', timestamp: '1 hour ago', type: 'info',    source: 'CLOUD', message: 'Patch Verified'   },
 ]
-
-const SOURCE_TAG: Record<'EDGE' | 'CLOUD', string> = {
-  EDGE:  'text-violet-400 bg-violet-500/10',
-  CLOUD: 'text-blue-400 bg-blue-500/10',
-}
 
 function DefenseLog() {
   const { entries, addEntry } = useDefenseLog(INITIAL_ENTRIES)
@@ -45,24 +42,22 @@ function DefenseLog() {
   }
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-[#0a0f1d] p-8 h-full lg:sticky lg:top-24">
-      <div className="mb-8 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Terminal className="h-5 w-5 text-violet-400" />
-          <h2 className="text-[12px] font-black tracking-widest uppercase text-white">
-            Aegis Pulse
-          </h2>
-        </div>
-        <button
-          onClick={runThreatScan}
-          disabled={isScanning}
-          className="text-[9px] font-black uppercase tracking-widest px-3 py-1.5 rounded border border-violet-500/30 text-violet-400 hover:bg-violet-500/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-        >
-          {isScanning ? 'Scanning…' : 'Scan Threats'}
-        </button>
-      </div>
+    <AegisCard>
+      <CardHeader 
+        title="Aegis Pulse" 
+        icon={Terminal}
+        rightElement={
+          <AegisButton 
+            label={isScanning ? "Scanning..." : "Scan Threats"} 
+            icon={isScanning ? Loader2 : Zap}
+            loading={isScanning}
+            variant="outline"
+            onClick={runThreatScan}
+          />
+        }
+      />
 
-      <div className="space-y-6 relative">
+      <div className="space-y-6 relative h-[250px] overflow-y-auto custom-scrollbar pr-2 pt-4">
         <div className="absolute left-2.5 top-2 h-[90%] w-px border-l border-dashed border-slate-800/60" />
 
         {isScanning && (
@@ -74,13 +69,11 @@ function DefenseLog() {
               <p className="text-[11px] font-black tracking-widest text-violet-300 uppercase">
                 AI Threat Analysis
               </p>
-              <span className="text-[8px] font-black px-1.5 py-0.5 rounded text-violet-400 bg-violet-500/10">
-                [EDGE]
-              </span>
+              <SourceLabel source="EDGE" />
             </div>
             <p
               ref={liveDisplayRef}
-              className="text-[9px] font-mono text-violet-400 mt-0.5 normal-case tracking-normal leading-relaxed"
+              className="text-[9px] font-mono text-violet-400 mt-0.5 normal-case tracking-normal leading-relaxed whitespace-pre-wrap"
             />
           </div>
         )}
@@ -91,14 +84,10 @@ function DefenseLog() {
               <div className="h-1.5 w-1.5 rounded-full bg-violet-500" />
             </div>
             <div className="flex items-center gap-2 mb-0.5">
-              <p className="text-[11px] font-black tracking-widest text-slate-200 uppercase">
+              <p className="text-[11px] font-black tracking-widest text-slate-200 uppercase truncate">
                 {entry.message}
               </p>
-              {entry.source && (
-                <span className={`text-[8px] font-black px-1.5 py-0.5 rounded ${SOURCE_TAG[entry.source]}`}>
-                  [{entry.source}]
-                </span>
-              )}
+              {entry.source && <SourceLabel source={entry.source} />}
             </div>
             <p className="text-[9px] font-bold text-slate-600 uppercase">
               {entry.timestamp}
@@ -106,7 +95,7 @@ function DefenseLog() {
           </div>
         ))}
       </div>
-    </div>
+    </AegisCard>
   )
 }
 

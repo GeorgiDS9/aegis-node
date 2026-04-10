@@ -126,7 +126,7 @@ export default function PatchModal({ commands, onClose, onDeployed }: Props) {
             <button
               onClick={handleDeploy}
               disabled={authorizedCommands.length === 0 || deploying}
-              className="flex items-center gap-2 rounded bg-violet-600 px-5 py-2 text-[10px] font-black uppercase tracking-widest text-white hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 rounded bg-violet-600 px-5 py-2 text-[10px] font-black uppercase tracking-widest text-white enabled:hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >
               {deploying ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
               Deploy Remediation
