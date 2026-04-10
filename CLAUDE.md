@@ -6,7 +6,7 @@ Aegis is the Active Defense node of the Vanguard Protocol. It provides autonomou
 
 ## 2. Technical Stack
 
-- **Framework:** Next.js 16 (App Router + React 19)
+- **Framework:** Next.js 15 (App Router + React 18)
 - **UI:** Tailwind CSS (Electric Violet Theme)
 - **Sandbox:** OrbStack (Docker) limited to 4GB RAM
 - **AI:** Local Ollama (Llama-3-8B-Q4) via host.docker.internal
@@ -14,12 +14,10 @@ Aegis is the Active Defense node of the Vanguard Protocol. It provides autonomou
 
 ## 2.1 Version Governance & Stability Lock
 
-**Strict Version Policy:** This project is locked to **Next.js 15 LTS** and **React 18**. Do not attempt to upgrade dependencies to Next.js 16 or React 19.
+**Strict Version Policy:** This project is locked to **Next.js 15.0.0** (exact pin) and **React 18**. Do not upgrade without an explicit decision from the Architect.
 
-- **Reasoning:** Aegis is a Phase 3 Enforcement Node. We prioritize the "Hardened Stability" of the v15 Async Request APIs and Middleware over the bleeding-edge features of v16.
-- **Memory Optimization:** v15 maintains a leaner footprint, preserving maximum Unified Memory for local Llama-3 inference on the M4.
-- **Ecosystem Parity:** While Vanguard (Phase 2) operates on v16 for cloud-scale reconnaissance, Aegis operates on v15 to ensure 100% uptime during kernel-level remediation.
-- **Constraint:** If the Agent detects an "upgrade available" notice, it must be ignored. All new code must conform to React 18 patterns (avoiding React 19 specific hooks like `useActionState`).
+- **Reason:** The codebase is built and tested on these versions. An upgrade mid-project introduces churn with no concrete benefit — wait until there is a specific feature or fix that warrants it.
+- **Constraint:** All new code must use React 18 patterns. Do not use React 19-specific APIs (e.g. `useActionState`). If an "upgrade available" notice appears, ignore it.
 
 ## 3. Development Workflow (The Sprint Protocol)
 
