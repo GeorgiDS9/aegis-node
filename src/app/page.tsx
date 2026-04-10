@@ -37,7 +37,7 @@ export default function AegisLanding() {
         <p className="text-xs md:text-sm font-black tracking-[0.35em] text-slate-400 uppercase leading-relaxed">
           Autonomous hardware remediation for the{" "}
           <span className="text-violet-500 whitespace-nowrap">
-            Vanguard Protocol
+            Vanguard Protocol 🛰️
           </span>
         </p>
         <p className="text-[10px] md:text-xs font-bold tracking-[0.2em] text-slate-500 uppercase">
@@ -49,9 +49,9 @@ export default function AegisLanding() {
       <div className="flex flex-col md:flex-row gap-8 mb-28">
         {/* Primary Action */}
         <Link href="/console">
-          <AegisButton 
-            label="Initialize Defense Console" 
-            icon={ArrowRight} 
+          <AegisButton
+            label="Initialize Defense Console"
+            icon={ArrowRight}
             size="md"
             className="px-10 !py-4 shadow-[0_0_30px_rgba(139,92,246,0.2)]"
           />
@@ -59,8 +59,8 @@ export default function AegisLanding() {
 
         {/* Secondary Action */}
         <Link href="https://github.com/GeorgiDS9/aegis-node">
-          <AegisButton 
-            label="Protocol Documentation" 
+          <AegisButton
+            label="Protocol Documentation"
             variant="outline"
             size="md"
             className="px-10 !py-4"
