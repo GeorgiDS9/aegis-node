@@ -65,3 +65,19 @@ export interface VaultSearchResult {
   score: number
 }
 
+// ── Firewall status (read-only pfctl audit) ───────────────────────
+export interface FirewallStatus {
+  enabled: boolean
+  interfaces: string[]
+  rawOutput: string
+  error?: string
+}
+
+// ── WAF enforcement event ─────────────────────────────────────────
+export interface WafEvent {
+  ruleId: string
+  label: string
+  enabled: boolean
+  timestamp: string
+}
+
