@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Hexagon, Zap, Shield, Cpu, Activity, ArrowRight } from "lucide-react";
+import { AegisButton } from "@/components/ui/AegisButton";
 
 export default function AegisLanding() {
   return (
@@ -47,22 +48,23 @@ export default function AegisLanding() {
       {/* ⬢ ACTION GATE*/}
       <div className="flex flex-col md:flex-row gap-8 mb-28">
         {/* Primary Action */}
-        <Link
-          href="/console"
-          className="group relative px-10 py-4 bg-white text-black font-black uppercase tracking-widest text-[11px] rounded-md transition-all hover:bg-violet-600 hover:text-white flex items-center gap-3 overflow-hidden"
-        >
-          Initialize Defense Console
-          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-          {/* Subtle Shadow Layer */}
-          <div className="absolute -bottom-1 -right-1 h-full w-full bg-violet-500/20 -z-10 rounded-md group-hover:bg-violet-500/40 transition-colors" />
+        <Link href="/console">
+          <AegisButton 
+            label="Initialize Defense Console" 
+            icon={ArrowRight} 
+            size="md"
+            className="px-10 !py-4 shadow-[0_0_30px_rgba(139,92,246,0.2)]"
+          />
         </Link>
 
         {/* Secondary Action */}
-        <Link
-          href="https://github.com/GeorgiDS9/aegis-node"
-          className="px-10 py-4 border border-slate-800 bg-slate-950/40 text-slate-400 font-black uppercase tracking-widest text-[11px] rounded-md hover:border-violet-500/50 hover:text-white transition-all"
-        >
-          Protocol Documentation
+        <Link href="https://github.com/GeorgiDS9/aegis-node">
+          <AegisButton 
+            label="Protocol Documentation" 
+            variant="outline"
+            size="md"
+            className="px-10 !py-4"
+          />
         </Link>
       </div>
 
