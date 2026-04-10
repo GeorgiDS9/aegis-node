@@ -17,7 +17,11 @@ export default function PerimeterHealth({ status }: Props) {
             Perimeter Health
           </span>
         </div>
-        <span className="text-[8px] font-black uppercase px-2 py-0.5 rounded border text-slate-500 border-slate-700/60 bg-slate-800/40 tracking-widest">
+        <span className={`text-[8px] font-black uppercase px-2 py-0.5 rounded border tracking-widest ${
+          isError
+            ? 'text-blue-400 border-blue-500/30 bg-blue-500/10'
+            : 'text-slate-500 border-slate-700/60 bg-slate-800/40'
+        }`}>
           Read-Only Auditor
         </span>
       </div>

@@ -1,21 +1,26 @@
 "use client";
 
-import { useState, memo } from "react";
-import { Cpu, Cloud, ChevronRight, Loader2 } from "lucide-react";
-import type { ScanAlert, RemediationItem } from "@/types/aegis";
+import { memo } from "react";
+import { Cpu, Cloud, ChevronRight, Loader2, WifiOff, ShieldAlert } from "lucide-react";
+import type { ScanAlert, VanguardFeedResult, KineticCommand } from "@/types/aegis";
 import { useStreamingAI } from "@/hooks/useAegis";
 import { logRemediation } from "@/actions/vault";
+import { buildKineticCommands } from "@/lib/kinetic-bridge";
 
 interface Props {
   edgeAlerts: ScanAlert[];
-  cloudItems: RemediationItem[];
+  vanguardFeed: VanguardFeedResult;
   chipModel: string;
+  onAuthorize: (cmd: KineticCommand) => void;
+  authorizedIds: Set<string>;
 }
 
 function RemediationQueue({
   edgeAlerts,
-  cloudItems,
+  vanguardFeed,
   chipModel,
+  onAuthorize,
+  authorizedIds,
 }: Props) {
   const { streamingIds, plans, expanded, streamQuery, toggleExpand } = useStreamingAI();
 
@@ -141,60 +146,110 @@ function RemediationQueue({
         </div>
       </div>
 
-      {/* ── RIGHT PANEL: CLOUD ASSETS (VANGUARD) ─────────────────── */}
-      <div className="rounded-2xl border border-slate-800 bg-slate-900/30 p-6 backdrop-blur-xl h-full flex flex-col min-h-[400px]">
-        <div className="mb-6 flex items-center justify-between border-b border-slate-800/60 pb-4 flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <Cloud className="h-4 w-4 text-blue-400" />
-            <h3 className="text-xs font-black tracking-widest uppercase text-white">
-              Cloud Queue: Vanguard Agent
-            </h3>
-          </div>
-          <span className="text-[9px] font-bold text-blue-400 uppercase px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20">
-            Global Asset
-          </span>
-        </div>
-
-        <div className="flex flex-col flex-1 pr-2">
-          <div className="flex flex-col items-center justify-center py-10 px-6 gap-5">
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full border border-blue-500/20 flex items-center justify-center flex-shrink-0 bg-blue-500/5 shadow-[0_0_15px_-5px_rgba(59,130,246,0.2)]">
-                <Cloud className="h-5 w-5 text-blue-400/60 animate-pulse" />
+      {/* ── RIGHT PANEL: CLOUD GRID (VANGUARD) ───────────────────── */}
+      {(() => {
+        const kineticCmds = buildKineticCommands(vanguardFeed.alerts);
+        const ALERT_TYPE_COLOR: Record<string, string> = {
+          critical: "text-red-400 border-red-500/30 bg-red-500/10",
+          high:     "text-amber-400 border-amber-500/30 bg-amber-500/10",
+          medium:   "text-blue-400 border-blue-500/30 bg-blue-500/10",
+          info:     "text-slate-500 border-slate-700/30 bg-slate-700/10",
+        };
+        return (
+          <div className="rounded-2xl border border-slate-800 bg-slate-900/30 p-6 backdrop-blur-xl h-full flex flex-col min-h-[400px]">
+            <div className="mb-6 flex items-center justify-between border-b border-slate-800/60 pb-4 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <Cloud className="h-4 w-4 text-blue-400" />
+                <h3 className="text-xs font-black tracking-widest uppercase text-white">
+                  Cloud Grid: Vanguard
+                </h3>
               </div>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                Awaiting signals from Vanguard Orchestrator...
-              </p>
+              <div className="flex items-center gap-2">
+                {vanguardFeed.connected ? (
+                  <span className="text-[9px] font-bold text-emerald-400 uppercase px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-1">
+                    <span className="h-1 w-1 rounded-full bg-emerald-400 animate-pulse inline-block" />
+                    Live
+                  </span>
+                ) : (
+                  <span className="text-[9px] font-bold text-slate-500 uppercase px-2 py-0.5 rounded bg-slate-700/20 border border-slate-700/40 flex items-center gap-1">
+                    <WifiOff className="h-2.5 w-2.5" />
+                    Offline
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="flex-1 space-y-3 overflow-y-auto pr-1">
+              {!vanguardFeed.connected ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-4">
+                  <div className="h-10 w-10 rounded-full border border-slate-800 flex items-center justify-center">
+                    <WifiOff className="h-5 w-5 text-slate-700" />
+                  </div>
+                  <div className="text-center">
+                    <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest">
+                      Vanguard Unreachable
+                    </p>
+                    {vanguardFeed.error && (
+                      <p className="text-[9px] font-mono text-slate-700 mt-1 max-w-[200px] break-words">
+                        {vanguardFeed.error}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : vanguardFeed.alerts.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-10 gap-3">
+                  <Cloud className="h-6 w-6 text-slate-700" />
+                  <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest">
+                    No active threats
+                  </p>
+                </div>
+              ) : (
+                vanguardFeed.alerts.map((alert) => {
+                  const cmd = kineticCmds.find((c) => c.alertId === alert.id);
+                  const isAuthorized = authorizedIds.has(alert.id);
+                  return (
+                    <div key={alert.id} className="rounded-lg border border-slate-800 bg-slate-950/40 p-3 space-y-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className={`text-[8px] font-black px-1.5 py-0.5 rounded border ${ALERT_TYPE_COLOR[alert.type] ?? ALERT_TYPE_COLOR.info}`}>
+                              {alert.type.toUpperCase()}
+                            </span>
+                            {alert.source_ip && (
+                              <span className="text-[8px] font-mono text-slate-500">{alert.source_ip}</span>
+                            )}
+                          </div>
+                          <p className="text-[10px] font-bold text-slate-300 leading-snug">{alert.message}</p>
+                        </div>
+                        {cmd && (
+                          <button
+                            onClick={() => onAuthorize({ ...cmd, authorized: !isAuthorized })}
+                            className={`flex-shrink-0 flex items-center gap-1.5 rounded px-2.5 py-1.5 text-[9px] font-black uppercase tracking-widest transition-colors ${
+                              isAuthorized
+                                ? "bg-emerald-600/20 border border-emerald-500/30 text-emerald-400"
+                                : "bg-slate-800 border border-slate-700 text-slate-400 hover:border-violet-500/40 hover:text-violet-400"
+                            }`}
+                          >
+                            {isAuthorized
+                              ? <><ShieldAlert className="h-3 w-3" />Authorized</>
+                              : <><ChevronRight className="h-3 w-3" />Authorize</>
+                            }
+                          </button>
+                        )}
+                      </div>
+                      {cmd && (
+                        <div className="rounded bg-slate-950/80 px-3 py-1.5 border border-slate-800/60">
+                          <code className="text-[9px] font-mono text-violet-400/70 break-all">{cmd.command}</code>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
-
-          {cloudItems.length > 0 && (
-            <div className="w-full space-y-2 mt-2">
-              {cloudItems.map((item) => (
-                <div
-                  key={item.id}
-                  className="p-3 rounded-lg bg-slate-950/40 border border-slate-800/60 flex justify-between items-center opacity-60 group hover:opacity-100 transition-opacity"
-                >
-                  <div>
-                    <p className="text-[10px] font-black text-slate-200 uppercase tracking-widest">
-                      {item.target}
-                    </p>
-                    <p className="text-[9px] text-slate-500 mt-0.5">{item.action}</p>
-                  </div>
-                  <span className={`text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border ${
-                    item.risk === 'CRITICAL' 
-                      ? 'text-red-400 border-red-500/30 bg-red-500/10' 
-                      : item.risk === 'HIGH' 
-                        ? 'text-amber-400 border-amber-500/30 bg-amber-500/10'
-                        : 'text-slate-500 border-slate-700/30 bg-slate-700/10'
-                  }`}>
-                    {item.risk}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
+        );
+      })()}
     </section>
   );
 }
