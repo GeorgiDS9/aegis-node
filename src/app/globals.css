@@ -34,15 +34,28 @@ body {
   background: rgba(139, 92, 246, 0.4);
 }
 
-/* ── Global Input Resets ──────────────────────────────────────────── */
+/* ── Global Interactive Reset ─────────────────────────────────────── */
+* {
+  outline: none !important;
+  -webkit-tap-highlight-color: transparent;
+}
+
+*:focus,
+*:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 input:focus,
 input:focus-visible,
 textarea:focus,
 textarea:focus-visible,
 select:focus,
-select:focus-visible {
-  outline: none;
-  box-shadow: none;
+select:focus-visible,
+button:focus,
+button:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* Prevent browser autofill from forcing white/yellow backgrounds */
