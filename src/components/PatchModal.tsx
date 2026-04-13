@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { Zap, X, Terminal, CheckCircle, Loader2, ShieldAlert } from 'lucide-react'
+import { AegisButton } from './ui/AegisButton'
 import type { KineticCommand } from '@/types/aegis'
 import { logRemediation } from '@/actions/vault'
 import { acknowledgeCloudAlerts } from '@/actions/cloud-ack'
@@ -126,14 +127,14 @@ export default function PatchModal({ commands, onClose, onDeployed }: Props) {
               <span className="text-[10px] font-black uppercase tracking-widest">Logged to Vault</span>
             </div>
           ) : (
-            <button
+            <AegisButton
+              label={deploying ? "Deploying..." : "Deploy Remediation"}
+              icon={deploying ? Loader2 : Zap}
+              loading={deploying}
+              disabled={authorizedCommands.length === 0}
               onClick={handleDeploy}
-              disabled={authorizedCommands.length === 0 || deploying}
-              className="flex items-center gap-2 rounded bg-violet-600 px-5 py-2 text-[10px] font-black uppercase tracking-widest text-white enabled:hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-            >
-              {deploying ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Zap className="h-3.5 w-3.5" />}
-              Deploy Remediation
-            </button>
+              size="sm"
+            />
           )}
         </div>
       </div>

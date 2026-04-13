@@ -7,6 +7,7 @@ import { AegisCard } from './ui/AegisCard'
 import { CardHeader } from './ui/CardHeader'
 import { AegisButton } from './ui/AegisButton'
 import { SourceLabel } from './ui/SourceLabel'
+import SystemLabel from './ui/SystemLabel'
 
 interface Props {
   initialLogs: VaultSearchResult[]
@@ -57,6 +58,7 @@ function DefenseLog({ initialLogs, alerts, firewall, metrics, vanguardAlertCount
             icon={isScanning ? Loader2 : Zap}
             loading={isScanning}
             variant="outline"
+            size="sm"
             onClick={runThreatScan}
           />
         }
@@ -71,23 +73,23 @@ function DefenseLog({ initialLogs, alerts, firewall, metrics, vanguardAlertCount
               <div className="h-1.5 w-1.5 rounded-full bg-violet-500 animate-pulse" />
             </div>
             <div className="flex items-center gap-2 mb-0.5">
-              <p className="text-[11px] font-black tracking-widest text-violet-300 uppercase">
+              <p className="text-[11px] font-black tracking-widest text-slate-300 uppercase">
                 AI_THREAT_SCANNING...
               </p>
               <SourceLabel source="EDGE" />
             </div>
             <p
               ref={liveDisplayRef}
-              className="text-[9px] font-mono text-violet-400 mt-0.5 normal-case tracking-normal leading-relaxed whitespace-pre-wrap"
+              className="text-[9px] font-mono text-slate-400 mt-0.5 normal-case tracking-normal leading-relaxed whitespace-pre-wrap"
             />
           </div>
         )}
 
         {entries.length === 0 && !isScanning && (
           <div className="relative pl-9">
-            <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">
+            <SystemLabel>
               No vault activity yet — run a scan or deploy a remediation.
-            </p>
+            </SystemLabel>
           </div>
         )}
 
@@ -100,7 +102,7 @@ function DefenseLog({ initialLogs, alerts, firewall, metrics, vanguardAlertCount
             </div>
             <div className="flex items-center gap-2 mb-0.5">
               <p className={`text-[11px] font-black tracking-widest uppercase truncate ${
-                entry.type === 'ai' ? 'text-violet-300' : 'text-slate-200'
+                entry.type === 'ai' ? 'text-slate-300' : 'text-slate-200'
               }`}>
                 {entry.type === 'ai' ? 'THREAT_ANALYSIS_REPORT' : entry.message}
               </p>

@@ -3,6 +3,7 @@ import type { FirewallStatus } from '@/types/aegis'
 import { AegisCard } from './ui/AegisCard'
 import { CardHeader } from './ui/CardHeader'
 import { StatusBadge } from './ui/StatusBadge'
+import SystemLabel from './ui/SystemLabel'
 
 interface Props {
   status: FirewallStatus
@@ -60,13 +61,13 @@ export default function PerimeterHealth({ status }: Props) {
             )}
           </div>
 
-          <p className="text-[10px] font-mono text-slate-500 truncate uppercase tracking-widest">
+          <SystemLabel className="truncate">
             {isError
               ? status.error
               : status.interfaces.length > 0
                 ? `Interfaces: ${status.interfaces.join(', ')}`
                 : 'pfctl -s info // no write access issued'}
-          </p>
+          </SystemLabel>
         </div>
       </div>
     </AegisCard>

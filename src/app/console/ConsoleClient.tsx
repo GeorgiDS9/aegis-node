@@ -12,6 +12,9 @@ import PerimeterHealth from "@/components/PerimeterHealth";
 import AdaptiveShield from "@/components/AdaptiveShield";
 import RedTeamPanel from "@/components/RedTeamPanel";
 import PatchModal from "@/components/PatchModal";
+import GovernancePulse from "@/components/GovernancePulse";
+
+import { WAF_RULES } from "@/constants/waf-rules";
 
 // ── UI Atoms ───────────────────────────────────────────────────────
 import { StatusBadge } from "@/components/ui/StatusBadge";
@@ -40,6 +43,9 @@ export default function ConsoleClient({
   const [patchModalOpen, setPatchModalOpen]      = useState<boolean>(false);
   const [suppressedCloudIds, setSuppressedCloudIds] = useState<Set<string>>(new Set());
   const [showToast, setShowToast]                = useState<boolean>(false);
+  const [activeWafRules, setActiveWafRules] = useState<Record<string, boolean>>(
+    () => Object.fromEntries(WAF_RULES.map((r) => [r.id, false]))
+  );
 
   const handleAuthorize = useCallback((cmd: KineticCommand) => {
     setAuthorizedCmds((prev) => {
@@ -204,18 +210,35 @@ export default function ConsoleClient({
           <VaultSearch />
         </div>
 
-        {/* ── ROW 4: DEFENSE LOG (full width) ─────────────────────── */}
-        <DefenseLog
-          initialLogs={initialLogs}
-          alerts={alerts}
-          firewall={firewall}
-          metrics={metrics}
-          vanguardAlertCount={filteredVanguard.alerts.length}
-        />
+        {/* ── ROW 4: PULSE & GOVERNANCE (50/50) ─────────────────── */}
+        <div className="flex flex-col md:flex-row gap-8">
+          <div className="w-full md:w-1/2">
+            <DefenseLog
+              initialLogs={initialLogs}
+              alerts={alerts}
+              firewall={firewall}
+              metrics={metrics}
+              vanguardAlertCount={filteredVanguard.alerts.length}
+            />
+          </div>
+          <div className="w-full md:w-1/2">
+            <GovernancePulse 
+              wafActiveCount={Object.values(activeWafRules).filter(Boolean).length}
+              wafTotalCount={WAF_RULES.length}
+              vaultStatus="IMMUTABLE"
+              hitlStatus="ACTIVE"
+              nodeId="M4_NODE_ALPHA // AEGIS-001"
+              mttrSeconds={14.2}
+            />
+          </div>
+        </div>
 
         {/* ── ROW 5: ADAPTIVE SHIELD | RED TEAM (50/50) ───────────── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <AdaptiveShield />
+          <AdaptiveShield 
+            activeRules={activeWafRules} 
+            onChange={setActiveWafRules} 
+          />
           <RedTeamPanel />
         </div>
       </div>

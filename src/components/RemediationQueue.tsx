@@ -11,6 +11,7 @@ import { StatusBadge } from "./ui/StatusBadge";
 import { AegisButton } from "./ui/AegisButton";
 import { CardHeader } from "./ui/CardHeader";
 import { SeverityTag } from "./ui/SeverityTag";
+import SystemLabel from "./ui/SystemLabel";
 
 interface Props {
   edgeAlerts: ScanAlert[];
@@ -67,9 +68,9 @@ function RemediationQueue({
           {activeAlerts.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 gap-4 opacity-40">
               <Cpu className="h-8 w-8 text-slate-700" />
-              <p className="text-[11px] font-bold text-slate-600 uppercase tracking-widest">
+              <SystemLabel type="empty-header">
                 No active threats
-              </p>
+              </SystemLabel>
             </div>
           ) : (
             activeAlerts.map((alert) => (
@@ -88,9 +89,9 @@ function RemediationQueue({
                     <p className="text-[13px] font-bold text-slate-300 capitalize">
                       {alert.message}
                     </p>
-                    <p className="text-[10px] font-mono font-medium text-slate-600 truncate uppercase tracking-widest">
+                    <SystemLabel className="truncate">
                       {alert.file.split("/").slice(-3).join("/") || alert.file}
-                    </p>
+                    </SystemLabel>
                   </div>
                   <AegisButton 
                     label="Fix" 
@@ -160,22 +161,22 @@ function RemediationQueue({
                     <WifiOff className="h-6 w-6 text-slate-700" />
                   </div>
                   <div className="text-center">
-                    <p className="text-[12px] font-black text-slate-500 uppercase tracking-widest">
+                    <SystemLabel type="empty-header">
                       Node Disconnected
-                    </p>
+                    </SystemLabel>
                     {vanguardFeed.error && (
-                      <p className="text-[10px] font-mono text-slate-700 mt-2 max-w-[250px] break-words uppercase">
+                      <SystemLabel className="mt-2 max-w-[250px] break-words">
                         {vanguardFeed.error}
-                      </p>
+                      </SystemLabel>
                     )}
                   </div>
                 </div>
               ) : vanguardFeed.alerts.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 gap-4 opacity-40">
                   <Cloud className="h-8 w-8 text-slate-700" />
-                  <p className="text-[11px] font-bold text-slate-600 uppercase tracking-widest">
+                  <SystemLabel type="empty-header">
                     No active threats
-                  </p>
+                  </SystemLabel>
                 </div>
               ) : (
                 vanguardFeed.alerts.map((alert) => {

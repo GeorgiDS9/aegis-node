@@ -5,6 +5,7 @@ import { AegisCard } from './ui/AegisCard'
 import { CardHeader } from './ui/CardHeader'
 import { AegisButton } from './ui/AegisButton'
 import { SourceLabel } from './ui/SourceLabel'
+import SystemLabel from './ui/SystemLabel'
 
 function VaultSearch() {
   const { results, loading, search, clear } = useVaultSearch()
@@ -39,7 +40,7 @@ function VaultSearch() {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
             placeholder="Search CVE drift or threat signatures..."
-            className="w-full bg-slate-950/40 border border-slate-800 rounded px-10 py-2.5 text-[11px] font-medium text-slate-200 placeholder:text-slate-600 focus:border-violet-500/30 transition-all outline-none"
+            className="w-full bg-slate-950/40 border border-slate-800 rounded px-10 py-2.5 text-[12px] font-medium text-slate-200 placeholder:text-slate-600 focus:border-violet-500/30 transition-all outline-none"
           />
           {input && (
             <button onClick={handleClear} className="absolute right-3 top-1/2 -translate-y-1/2">
@@ -53,6 +54,7 @@ function VaultSearch() {
           loading={loading}
           disabled={!input.trim()}
           variant="outline"
+          size="sm"
           onClick={handleSearch}
         />
       </div>
@@ -60,9 +62,9 @@ function VaultSearch() {
       {searched && (
         <div className="mt-4 space-y-3 max-h-[160px] overflow-y-auto custom-scrollbar pr-2">
           {results.length === 0 ? (
-            <p className="text-[11px] font-bold text-slate-600 uppercase tracking-widest text-center py-5">
+            <SystemLabel type="empty-header" className="text-center py-5">
               No matching signatures
-            </p>
+            </SystemLabel>
           ) : (
             results.map((r) => (
               <div key={r.id} className="p-3 rounded-xl bg-slate-950/40 border border-slate-800/60 hover:border-violet-500/20 transition-all">

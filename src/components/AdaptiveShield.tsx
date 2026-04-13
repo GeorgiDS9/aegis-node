@@ -51,16 +51,18 @@ const RuleRow = memo(function RuleRow({ rule, enabled, logging, onToggle }: Rule
   )
 })
 
-export default function AdaptiveShield() {
-  const [activeRules, setActiveRules] = useState<Record<string, boolean>>(
-    () => Object.fromEntries(WAF_RULES.map((r) => [r.id, false]))
-  )
+interface AdaptiveShieldProps {
+  activeRules: Record<string, boolean>
+  onChange: React.Dispatch<React.SetStateAction<Record<string, boolean>>>
+}
+
+export default function AdaptiveShield({ activeRules, onChange }: AdaptiveShieldProps) {
   const [loggingRule, setLoggingRule] = useState<string | null>(null)
   const [eventLog, setEventLog]       = useState<string[]>([])
 
   const handleToggle = useCallback(async (rule: WafRule) => {
     const next = !activeRules[rule.id]
-    setActiveRules((prev) => ({ ...prev, [rule.id]: next }))
+    onChange((prev) => ({ ...prev, [rule.id]: next }))
     setLoggingRule(rule.id)
 
     const ts = new Date().toISOString()
@@ -98,7 +100,7 @@ export default function AdaptiveShield() {
             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest tabular-nums">
               {activeCount}/{WAF_RULES.length} On
             </span>
-            <StatusBadge label="Simulation" type="default" />
+            <StatusBadge label="Simulation" type="default" size="md" />
           </div>
         }
       />
