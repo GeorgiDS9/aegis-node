@@ -205,7 +205,13 @@ export default function ConsoleClient({
 
         {/* ── ROW 4: AWARENESS SYNC (50/50) ───────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <DefenseLog />
+          <DefenseLog
+            initialLogs={initialLogs}
+            alerts={alerts}
+            firewall={firewall}
+            metrics={metrics}
+            vanguardAlertCount={filteredVanguard.alerts.length}
+          />
           <AdaptiveShield />
         </div>
       </div>

@@ -1,22 +1,79 @@
 import { useRef, memo } from 'react'
 import { Terminal, Loader2, Zap } from 'lucide-react'
-import type { DefenseLogEntry } from '@/types/aegis'
+import type { DefenseLogEntry, VaultSearchResult, ScanAlert, FirewallStatus, HardwareMetrics } from '@/types/aegis'
 import { useDefenseLog, useStreamingAI } from '@/hooks/useAegis'
 import { AegisCard } from './ui/AegisCard'
 import { CardHeader } from './ui/CardHeader'
 import { AegisButton } from './ui/AegisButton'
 import { SourceLabel } from './ui/SourceLabel'
 
-const INITIAL_ENTRIES: DefenseLogEntry[] = [
-  { id: '1', timestamp: '2 min ago',  type: 'success', source: 'EDGE',  message: 'WAF Rule Update' },
-  { id: '2', timestamp: '14 min ago', type: 'warning', source: 'EDGE',  message: 'Library Isolated' },
-  { id: '3', timestamp: '1 hour ago', type: 'info',    source: 'CLOUD', message: 'Patch Verified'   },
-]
+function mapOutcomeToType(outcome: string): DefenseLogEntry['type'] {
+  if (outcome === 'success' || outcome === 'enforced') return 'success'
+  if (outcome === 'suspended' || outcome === 'failed') return 'warning'
+  return 'info'
+}
 
-function DefenseLog() {
-  const { entries, addEntry } = useDefenseLog(INITIAL_ENTRIES)
+function formatRelativeTime(iso: string): string {
+  const diff = Date.now() - new Date(iso).getTime()
+  const mins = Math.floor(diff / 60000)
+  if (mins < 1) return 'just now'
+  if (mins < 60) return `${mins} min ago`
+  const hours = Math.floor(mins / 60)
+  if (hours < 24) return `${hours}h ago`
+  return `${Math.floor(hours / 24)}d ago`
+}
+
+function mapVaultToLogEntries(logs: VaultSearchResult[]): DefenseLogEntry[] {
+  return logs.map((r) => ({
+    id:        r.id,
+    timestamp: formatRelativeTime(r.timestamp),
+    type:      mapOutcomeToType(r.outcome),
+    source:    r.source,
+    message:   r.action,
+  }))
+}
+
+function buildScanContext(
+  alerts: ScanAlert[],
+  firewall: FirewallStatus,
+  metrics: HardwareMetrics,
+  vanguardAlertCount: number,
+  recentLogs: DefenseLogEntry[],
+): string {
+  const edgeCritical = alerts.filter((a) => a.type === 'critical').length
+  const edgeWarning  = alerts.filter((a) => a.type === 'warning').length
+  const fwStatus     = firewall.error
+    ? `Auditor mode — ${firewall.error}`
+    : firewall.enabled ? 'Active' : 'Inactive'
+  const recentActivity = recentLogs
+    .slice(0, 3)
+    .map((e) => `  - [${e.source ?? 'EDGE'}] ${e.message} (${e.timestamp})`)
+    .join('\n') || '  - No recent activity'
+
+  return `SYSTEM CONTEXT:
+- CPU: ${metrics.cpuUsagePercent}% utilization
+- Memory: ${metrics.memoryUsedGB} / ${metrics.totalMemoryGB} GB (${metrics.memoryUsedPercent}%)
+- Firewall: ${fwStatus}
+- Edge alerts: ${edgeCritical} critical, ${edgeWarning} warning
+- Cloud alerts: ${vanguardAlertCount} active
+- Recent vault activity:
+${recentActivity}
+
+TASK: Perform a rapid threat surface analysis of this M4 edge node based on the above system context. Summarize findings in 3 extremely concise bullet points. DO NOT include any headers, bold titles, or intros. Start immediately with the first bullet.`
+}
+
+interface Props {
+  initialLogs: VaultSearchResult[]
+  alerts: ScanAlert[]
+  firewall: FirewallStatus
+  metrics: HardwareMetrics
+  vanguardAlertCount: number
+}
+
+function DefenseLog({ initialLogs, alerts, firewall, metrics, vanguardAlertCount }: Props) {
+  const { entries, addEntry } = useDefenseLog(mapVaultToLogEntries(initialLogs))
   const { streamingIds, streamQuery } = useStreamingAI()
-  const liveRef        = useRef('')
+  const liveRef        = useRef<string>('')
   const liveDisplayRef = useRef<HTMLParagraphElement>(null)
 
   const isScanning = streamingIds.has('PULSE-SCAN')
@@ -25,9 +82,11 @@ function DefenseLog() {
     if (isScanning) return
     liveRef.current = ''
 
+    const prompt = buildScanContext(alerts, firewall, metrics, vanguardAlertCount, entries)
+
     await streamQuery(
       'PULSE-SCAN',
-      'Perform a rapid threat surface analysis of this M4 edge node. Summarize findings in 3 extremely concise bullet points. DO NOT include any headers, bold titles, or intros. Start immediately with the first bullet.',
+      prompt,
       (chunk) => {
         liveRef.current += chunk
         if (liveDisplayRef.current) {
@@ -43,12 +102,12 @@ function DefenseLog() {
 
   return (
     <AegisCard>
-      <CardHeader 
-        title="Aegis Pulse" 
+      <CardHeader
+        title="Aegis Pulse"
         icon={Terminal}
         rightElement={
-          <AegisButton 
-            label={isScanning ? "Scanning..." : "Scan Threats"} 
+          <AegisButton
+            label={isScanning ? "Scanning..." : "Scan Threats"}
             icon={isScanning ? Loader2 : Zap}
             loading={isScanning}
             variant="outline"
@@ -75,6 +134,14 @@ function DefenseLog() {
               ref={liveDisplayRef}
               className="text-[9px] font-mono text-violet-400 mt-0.5 normal-case tracking-normal leading-relaxed whitespace-pre-wrap"
             />
+          </div>
+        )}
+
+        {entries.length === 0 && !isScanning && (
+          <div className="relative pl-9">
+            <p className="text-[10px] font-mono text-slate-600 uppercase tracking-widest">
+              No vault activity yet — run a scan or deploy a remediation.
+            </p>
           </div>
         )}
 
