@@ -1,66 +1,12 @@
 import { useRef, memo } from 'react'
 import { Terminal, Loader2, Zap } from 'lucide-react'
 import type { DefenseLogEntry, VaultSearchResult, ScanAlert, FirewallStatus, HardwareMetrics } from '@/types/aegis'
+import { mapVaultToLogEntries, buildScanContext } from './DefenseLog.utils'
 import { useDefenseLog, useStreamingAI } from '@/hooks/useAegis'
 import { AegisCard } from './ui/AegisCard'
 import { CardHeader } from './ui/CardHeader'
 import { AegisButton } from './ui/AegisButton'
 import { SourceLabel } from './ui/SourceLabel'
-
-function mapOutcomeToType(outcome: string): DefenseLogEntry['type'] {
-  if (outcome === 'success' || outcome === 'enforced') return 'success'
-  if (outcome === 'suspended' || outcome === 'failed') return 'warning'
-  return 'info'
-}
-
-function formatRelativeTime(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime()
-  const mins = Math.floor(diff / 60000)
-  if (mins < 1) return 'just now'
-  if (mins < 60) return `${mins} min ago`
-  const hours = Math.floor(mins / 60)
-  if (hours < 24) return `${hours}h ago`
-  return `${Math.floor(hours / 24)}d ago`
-}
-
-function mapVaultToLogEntries(logs: VaultSearchResult[]): DefenseLogEntry[] {
-  return logs.map((r) => ({
-    id:        r.id,
-    timestamp: formatRelativeTime(r.timestamp),
-    type:      mapOutcomeToType(r.outcome),
-    source:    r.source,
-    message:   r.action,
-  }))
-}
-
-function buildScanContext(
-  alerts: ScanAlert[],
-  firewall: FirewallStatus,
-  metrics: HardwareMetrics,
-  vanguardAlertCount: number,
-  recentLogs: DefenseLogEntry[],
-): string {
-  const edgeCritical = alerts.filter((a) => a.type === 'critical').length
-  const edgeWarning  = alerts.filter((a) => a.type === 'warning').length
-  const fwStatus     = firewall.error
-    ? `Auditor mode — ${firewall.error}`
-    : firewall.enabled ? 'Active' : 'Inactive'
-  const recentActivity = recentLogs
-    .slice(0, 3)
-    .map((e) => `  - [${e.source ?? 'EDGE'}] ${e.message} (${e.timestamp})`)
-    .join('\n') || '  - No recent activity'
-
-  return `SYSTEM CONTEXT:
-- CPU: ${metrics.cpuUsagePercent}% utilization
-- Memory: ${metrics.memoryUsedGB} / ${metrics.totalMemoryGB} GB (${metrics.memoryUsedPercent}%)
-- Firewall: ${fwStatus}
-- Edge alerts: ${edgeCritical} critical, ${edgeWarning} warning
-- Cloud alerts: ${vanguardAlertCount} active
-- Recent vault activity:
-${recentActivity}
-
-TASK: Perform a rapid threat surface analysis of this M4 edge node based on the above system context. Summarize findings in 3 extremely concise bullet points. DO NOT include any headers, bold titles, or intros. Start immediately with the first bullet.`
-}
 
 interface Props {
   initialLogs: VaultSearchResult[]
