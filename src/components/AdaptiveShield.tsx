@@ -115,6 +115,7 @@ export default function AdaptiveShield({ activeRules, onChange }: AdaptiveShield
             <StatusBadge
               label={activeCount > 0 ? 'Active' : 'Standby'}
               type={activeCount > 0 ? 'emerald' : 'default'}
+              size="md"
             />
           </div>
         }
