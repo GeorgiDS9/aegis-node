@@ -40,13 +40,6 @@ Protocol Definition: Vanguard is a decentralized intelligence grid providing rea
 
 ---
 
-## 📹 Operational Demo
-
-### Full product walkthrough: Command Center Protocol ➔ Probe Recon ➔ Governance Ledger Audit
-
-> [!IMPORTANT]
-> **Manual Download Protocol:** To view the high-resolution product demo directly, navigate to [aegis-node-demo.mp4](https://github.com/GeorgiDS9/vanguard-agent/blob/main/public/aegis-node-demo.mp4) and select **"View raw"** to initialize the local download.
-
 ---
 
 ## 🛠️ Technical Stack
@@ -56,7 +49,6 @@ Protocol Definition: Vanguard is a decentralized intelligence grid providing rea
 - **Database:** LanceDB (Embedded Vector Store for Local Sovereignty)
 - **Sandbox:** OrbStack (Containerized Node.js Environment)
 - **Styling:** Tailwind CSS + Lucide React
-
 
 ### 🛰️ System Identity
 
@@ -284,4 +276,3 @@ Four gates run in parallel on every push:
 | Clinical Code Standards | ESLint strict (Next.js flat config) |
 | TypeScript Strict Check | `tsc --noEmit`                      |
 | Unit Tests              | Vitest (`npm test`)                 |
-
