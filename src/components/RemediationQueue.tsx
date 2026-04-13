@@ -111,7 +111,7 @@ function RemediationQueue({
                         </span>
                       </div>
                     </div>
-                    <p className="text-[11px] font-medium text-slate-300 leading-relaxed whitespace-pre-wrap font-mono">
+                    <p className="text-[10px] font-mono text-slate-300 leading-relaxed whitespace-pre-wrap">
                       {plans[alert.id] || "Analyzing system state... ▋"}
                     </p>
                   </div>

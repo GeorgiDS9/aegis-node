@@ -141,7 +141,7 @@ export default function AdaptiveShield({ activeRules, onChange }: AdaptiveShield
           </p>
           <div className="space-y-1.5">
             {eventLog.map((line, i) => (
-              <p key={i} className="text-[11px] font-mono font-medium text-violet-400/70 leading-relaxed truncate">
+              <p key={i} className="text-[10px] font-mono text-violet-400/70 leading-relaxed truncate">
                 {line}
               </p>
             ))}

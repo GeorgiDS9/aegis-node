@@ -80,7 +80,7 @@ function DefenseLog({ initialLogs, alerts, firewall, metrics, vanguardAlertCount
             </div>
             <p
               ref={liveDisplayRef}
-              className="text-[11px] font-mono font-medium text-slate-300 mt-0.5 leading-relaxed whitespace-pre-wrap"
+              className="text-[11px] font-mono text-slate-300 mt-0.5 leading-relaxed whitespace-pre-wrap"
             />
           </div>
         )}
@@ -109,7 +109,7 @@ function DefenseLog({ initialLogs, alerts, firewall, metrics, vanguardAlertCount
               {entry.source && <SourceLabel source={entry.source} />}
             </div>
             {entry.type === 'ai' && (
-              <p className="text-[11px] font-mono font-medium text-slate-300 mt-1 mb-2 leading-relaxed whitespace-pre-wrap">
+              <p className="text-[11px] font-mono text-slate-300 mt-1 mb-2 leading-relaxed whitespace-pre-wrap">
                 {entry.message}
               </p>
             )}

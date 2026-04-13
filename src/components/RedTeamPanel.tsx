@@ -72,7 +72,7 @@ function RedTeamPanel() {
         
         <pre
           ref={scrollRef}
-          className="px-5 pb-5 pt-3 text-[11px] font-mono font-medium text-slate-300 leading-relaxed whitespace-pre-wrap overflow-y-auto custom-scrollbar flex-1"
+          className="px-5 pb-5 pt-3 text-[10px] font-mono text-slate-300 leading-relaxed whitespace-pre-wrap overflow-y-auto custom-scrollbar flex-1"
         >
           {output || (
             <div className="h-full flex flex-col items-center justify-center opacity-30 gap-3">
