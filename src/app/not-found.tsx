@@ -19,17 +19,11 @@ export default function NotFound() {
             </div>
           </div>
 
-
           {/* ⬢ ERROR TEXT */}
-          <div className="space-y-4">
-            <div className="space-y-1">
-              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-violet-500/80">
-                System_Status: Route_Not_Found
-              </span>
-              <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-white drop-shadow-sm">
-                Node <span className="text-violet-500">De-Synced</span>
-              </h1>
-            </div>
+          <div className="space-y-6">
+            <h1 className="text-[13px] font-black uppercase tracking-[0.3em] text-white">
+              System_Status: Route_Not_Found
+            </h1>
             
             <div className="py-4 px-6 rounded-xl border border-slate-800/60 bg-slate-900/10 backdrop-blur-sm max-w-sm mx-auto">
               <div className="flex items-start gap-3 text-left">
@@ -55,10 +49,6 @@ export default function NotFound() {
               </div>
             </div>
           </Link>
-
-          <p className="text-[9px] font-bold text-slate-600 uppercase tracking-[0.2em] pt-8">
-            Localized Route Exception // Aegis v1.0
-          </p>
         </div>
       </div>
     </main>
