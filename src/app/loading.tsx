@@ -25,14 +25,14 @@ export default function Loading() {
         </div>
 
         {/* ⬢ LOADING STATUS */}
-        <div className="text-center space-y-4">
-          <div className="space-y-1.5">
-            <h2 className="text-[12px] font-black uppercase tracking-[0.4em] text-white">
+        <div className="w-full flex flex-col items-center space-y-4">
+          <div className="flex flex-col items-center space-y-2">
+            <h2 className="text-[13px] font-black uppercase tracking-[0.3em] text-white text-center w-full">
               Initializing Node
             </h2>
-            <div className="flex items-center justify-center gap-3">
-              <div className="h-1 w-1 rounded-full bg-violet-500 animate-ping" />
-              <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-violet-400/80">
+            <div className="flex items-center justify-center gap-2 relative">
+              <div className="absolute -left-4 h-1 w-1 rounded-full bg-violet-500 animate-ping" />
+              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-violet-400/80 text-center">
                 Secure Interlock Engaged
               </span>
             </div>
@@ -59,11 +59,6 @@ export default function Loading() {
             </div>
           </div>
         </div>
-
-        {/* ⬢ SYSTEM IDENTITY */}
-        <p className="text-[8px] font-black text-slate-700 uppercase tracking-[0.3em] pt-4">
-          Aegis Defense Console // Local Operational Node
-        </p>
       </div>
     </main>
   )
