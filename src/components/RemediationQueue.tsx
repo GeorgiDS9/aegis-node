@@ -61,7 +61,7 @@ function RemediationQueue({
         <CardHeader 
           title={`Edge Queue: ${chipModel}`}
           icon={Cpu}
-          rightElement={<StatusBadge label="Local-Only" type="default" />}
+          rightElement={<StatusBadge label="Local-Only" type="default" size="md" />}
         />
 
         <div className="space-y-3 flex-1 pr-2 overflow-y-auto custom-scrollbar">
@@ -134,6 +134,7 @@ function RemediationQueue({
                 <StatusBadge 
                   label={vanguardFeed.connected ? "Live" : "Offline"} 
                   type={vanguardFeed.connected ? "emerald" : "default"}
+                  size="md"
                   icon={vanguardFeed.connected ? undefined : WifiOff}
                   pulse={vanguardFeed.connected}
                 />
@@ -173,7 +174,7 @@ function RemediationQueue({
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0 flex-1 space-y-2">
                           <div className="flex items-center gap-2.5">
-                            <SeverityTag level={alert.type} />
+                            <SeverityTag level={alert.type} size="sm" />
                             {alert.source_ip && (
                               <span className="text-[11px] font-mono font-bold text-slate-600">{alert.source_ip}</span>
                             )}

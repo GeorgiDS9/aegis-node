@@ -16,7 +16,7 @@ export function SeverityTag({ level, size = 'md' }: SeverityTagProps) {
   }
 
   const selectedStyle = styles[norm] || styles.info
-  const sizeStyle     = size === 'sm' ? "text-[8px] px-1.5 py-0.5" : "text-[10px] px-2 py-0.5"
+  const sizeStyle     = size === 'sm' ? "text-[9px] px-2 py-0.5" : "text-[10px] px-2.5 py-0.5"
 
   return (
     <span className={`font-black uppercase rounded border tracking-widest ${selectedStyle} ${sizeStyle}`}>

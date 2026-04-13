@@ -21,6 +21,7 @@ export default function PerimeterHealth({ status }: Props) {
           <StatusBadge 
             label="Read-Only Auditor" 
             type="default" 
+            size="md"
           />
         }
       />
@@ -50,13 +51,13 @@ export default function PerimeterHealth({ status }: Props) {
               {isError ? 'Auditor Mode' : status.enabled ? 'PF Firewall Active' : 'PF Firewall Inactive'}
             </p>
             {isError && (
-              <StatusBadge label="Restricted" type="blue" size="xs" />
+              <StatusBadge label="Restricted" type="blue" size="sm" />
             )}
             {!isError && (
               <StatusBadge 
                 label={status.enabled ? 'Enabled' : 'Disabled'} 
                 type={status.enabled ? 'emerald' : 'red'} 
-                size="xs" 
+                size="sm" 
               />
             )}
           </div>

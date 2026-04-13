@@ -19,7 +19,7 @@ export function StatusBadge({ label, icon: Icon, type = 'violet', pulse = false,
   }
 
   const sizes = {
-    xs: 'text-[8px] px-1.5 py-0.5',
+    xs: 'text-[9px] px-2 py-0.5',
     sm: 'text-[9px] px-2 py-0.5',
     md: 'text-[10px] px-2.5 py-0.5',
   }

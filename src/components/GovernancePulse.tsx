@@ -45,7 +45,7 @@ function GovernancePulse({
         title="GOVERNANCE: NIST_CSF_V2" 
         icon={Scale}
         rightElement={
-          <StatusBadge label="V2.0_2024" type="default" size="sm" />
+          <StatusBadge label="V2.0_2024" type="default" size="md" />
         }
       />
 
@@ -94,7 +94,7 @@ function GovernancePulse({
                <SystemLabel className="text-slate-200 font-bold">
                 MTTR: {mttrSeconds}s
               </SystemLabel>
-              <StatusBadge label={`HITL: ${hitlStatus}`} type={HITL_MAP[hitlStatus]} size="xs" />
+              <StatusBadge label={`HITL: ${hitlStatus}`} type={HITL_MAP[hitlStatus]} size="sm" />
             </div>
           </div>
           <div className="h-[1px] w-full bg-slate-800/50" />
@@ -108,7 +108,7 @@ function GovernancePulse({
               RECOVER (RC)
             </div>
             <div className="flex items-center gap-2">
-               <StatusBadge label={`SYNC: ${vaultStatus}`} type={VAULT_MAP[vaultStatus]} size="xs" />
+               <StatusBadge label={`SYNC: ${vaultStatus}`} type={VAULT_MAP[vaultStatus]} size="sm" />
             </div>
           </div>
         </div>
