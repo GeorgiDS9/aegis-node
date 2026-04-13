@@ -10,6 +10,7 @@ import DefenseLog from "@/components/DefenseLog";
 import VaultSearch from "@/components/VaultSearch";
 import PerimeterHealth from "@/components/PerimeterHealth";
 import AdaptiveShield from "@/components/AdaptiveShield";
+import RedTeamPanel from "@/components/RedTeamPanel";
 import PatchModal from "@/components/PatchModal";
 
 // ── UI Atoms ───────────────────────────────────────────────────────
@@ -203,16 +204,19 @@ export default function ConsoleClient({
           <VaultSearch />
         </div>
 
-        {/* ── ROW 4: AWARENESS SYNC (50/50) ───────────────────────── */}
+        {/* ── ROW 4: DEFENSE LOG (full width) ─────────────────────── */}
+        <DefenseLog
+          initialLogs={initialLogs}
+          alerts={alerts}
+          firewall={firewall}
+          metrics={metrics}
+          vanguardAlertCount={filteredVanguard.alerts.length}
+        />
+
+        {/* ── ROW 5: ADAPTIVE SHIELD | RED TEAM (50/50) ───────────── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <DefenseLog
-            initialLogs={initialLogs}
-            alerts={alerts}
-            firewall={firewall}
-            metrics={metrics}
-            vanguardAlertCount={filteredVanguard.alerts.length}
-          />
           <AdaptiveShield />
+          <RedTeamPanel />
         </div>
       </div>
 

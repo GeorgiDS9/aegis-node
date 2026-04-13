@@ -138,6 +138,53 @@ export function useAegisPulse(initial?: PulseData) {
   return data ?? initial;
 }
 
+// ── Red Team probe hook ───────────────────────────────────────────
+export function useRedTeam() {
+  const [output, setOutput]   = useState<string>('')
+  const [running, setRunning] = useState<boolean>(false)
+  const abortRef = useRef<AbortController | null>(null)
+
+  const commence = useCallback(async () => {
+    if (running) return
+    setOutput('')
+    setRunning(true)
+    abortRef.current = new AbortController()
+
+    try {
+      const res = await fetch('/api/red-team/run', {
+        signal: abortRef.current.signal,
+      })
+
+      if (!res.ok || !res.body) {
+        setOutput('Red Team Engine offline — route unreachable.')
+        return
+      }
+
+      const reader  = res.body.getReader()
+      const decoder = new TextDecoder()
+
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        setOutput((prev) => prev + decoder.decode(value, { stream: true }))
+      }
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name !== 'AbortError') {
+        setOutput((prev) => prev + '\n[ERROR: Probe sequence disrupted]')
+      }
+    } finally {
+      setRunning(false)
+    }
+  }, [running])
+
+  const abort = useCallback(() => {
+    abortRef.current?.abort()
+    setRunning(false)
+  }, [])
+
+  return { output, running, commence, abort }
+}
+
 export function useVaultSearch() {
   const [results, setResults] = useState<VaultSearchResult[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
