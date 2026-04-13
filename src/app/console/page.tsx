@@ -4,18 +4,20 @@ import { initVault, getDefenseLogs } from "@/actions/vault";
 import { getFirewallStatus }   from "@/actions/firewall";
 import { fetchThreatFeed }     from "@/actions/vanguard";
 import { getAcknowledgedCloudIds } from "@/actions/cloud-ack";
+import { getWafConfig }        from "@/actions/waf-config";
 import ConsoleClient from "./ConsoleClient";
 
 export const dynamic = "force-dynamic";
 
 export default async function ConsolePage() {
-  const [metrics, edgeAlerts, firewall, vanguardFeed, logs, ackedCloudIds] = await Promise.all([
+  const [metrics, edgeAlerts, firewall, vanguardFeed, logs, ackedCloudIds, wafConfig] = await Promise.all([
     getHardwareMetrics(),
     scanWatchFolder(),
     initVault().then(() => getFirewallStatus()),
     fetchThreatFeed(),
     getDefenseLogs(),
     getAcknowledgedCloudIds(),
+    getWafConfig(),
   ]);
 
   // Suppress edge alerts mitigated in the vault within 24h
@@ -44,6 +46,7 @@ export default async function ConsolePage() {
       initialFirewall={firewall}
       vanguardFeed={filteredVanguard}
       initialLogs={logs}
+      initialWafState={wafConfig}
     />
   );
 }

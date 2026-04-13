@@ -30,6 +30,7 @@ interface Props {
   initialFirewall: FirewallStatus;
   vanguardFeed: VanguardFeedResult;
   initialLogs: VaultSearchResult[];
+  initialWafState: Record<string, boolean>;
 }
 
 export default function ConsoleClient({
@@ -38,14 +39,13 @@ export default function ConsoleClient({
   initialFirewall,
   vanguardFeed,
   initialLogs,
+  initialWafState,
 }: Props) {
   const [authorizedCmds, setAuthorizedCmds]     = useState<Map<string, KineticCommand>>(new Map());
   const [patchModalOpen, setPatchModalOpen]      = useState<boolean>(false);
   const [suppressedCloudIds, setSuppressedCloudIds] = useState<Set<string>>(new Set());
   const [showToast, setShowToast]                = useState<boolean>(false);
-  const [activeWafRules, setActiveWafRules] = useState<Record<string, boolean>>(
-    () => Object.fromEntries(WAF_RULES.map((r) => [r.id, false]))
-  );
+  const [activeWafRules, setActiveWafRules] = useState<Record<string, boolean>>(initialWafState);
 
   const handleAuthorize = useCallback((cmd: KineticCommand) => {
     setAuthorizedCmds((prev) => {

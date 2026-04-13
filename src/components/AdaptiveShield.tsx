@@ -1,8 +1,9 @@
-import { useState, useCallback, memo } from 'react'
+import { useState, useCallback, useEffect, memo } from 'react'
 import { ShieldAlert, Loader2 } from 'lucide-react'
 import { WAF_RULES } from '@/constants/waf-rules'
 import type { WafRule } from '@/constants/waf-rules'
 import { logRemediation } from '@/actions/vault'
+import { saveWafConfig } from '@/actions/waf-config'
 import { AegisCard } from './ui/AegisCard'
 import { CardHeader } from './ui/CardHeader'
 import { StatusBadge } from './ui/StatusBadge'
@@ -60,23 +61,34 @@ export default function AdaptiveShield({ activeRules, onChange }: AdaptiveShield
   const [loggingRule, setLoggingRule] = useState<string | null>(null)
   const [eventLog, setEventLog]       = useState<string[]>([])
 
+  // Sync cookie with disk state on mount — ensures middleware has current
+  // enforcement rules after a server restart (cookie may have been cleared).
+  useEffect(() => {
+    saveWafConfig(activeRules)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const handleToggle = useCallback(async (rule: WafRule) => {
     const next = !activeRules[rule.id]
+    const nextState = { ...activeRules, [rule.id]: next }
     onChange((prev) => ({ ...prev, [rule.id]: next }))
     setLoggingRule(rule.id)
 
     const ts = new Date().toISOString()
 
-    await logRemediation({
-      id:        `WAF-${rule.id}-${Date.now()}`,
-      cve_id:    rule.id,
-      target:    'Adaptive WAF',
-      action:    `${next ? 'ENABLE' : 'DISABLE'}: ${rule.label}`,
-      risk:      rule.risk,
-      outcome:   next ? 'enforced' : 'suspended',
-      source:    'EDGE',
-      timestamp: ts,
-    })
+    await Promise.all([
+      logRemediation({
+        id:        `WAF-${rule.id}-${Date.now()}`,
+        cve_id:    rule.id,
+        target:    'Adaptive WAF',
+        action:    `${next ? 'ENABLE' : 'DISABLE'}: ${rule.label}`,
+        risk:      rule.risk,
+        outcome:   next ? 'enforced' : 'suspended',
+        source:    'EDGE',
+        timestamp: ts,
+      }),
+      saveWafConfig(nextState),
+    ])
 
     setEventLog((prev) => [
       `[${new Date(ts).toLocaleTimeString('en-US', { hour12: false })}] ${next ? '▲ ENFORCE' : '▼ SUSPEND'} ${rule.label}`,
@@ -89,8 +101,8 @@ export default function AdaptiveShield({ activeRules, onChange }: AdaptiveShield
 
   return (
     <AegisCard>
-      <CardHeader 
-        title="Adaptive Shielding" 
+      <CardHeader
+        title="Adaptive Shielding"
         icon={ShieldAlert}
         rightElement={
           <div className="flex items-center gap-3">
@@ -100,7 +112,10 @@ export default function AdaptiveShield({ activeRules, onChange }: AdaptiveShield
             <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest tabular-nums">
               {activeCount}/{WAF_RULES.length} On
             </span>
-            <StatusBadge label="Simulation" type="default" size="md" />
+            <StatusBadge
+              label={activeCount > 0 ? 'Active' : 'Standby'}
+              type={activeCount > 0 ? 'emerald' : 'default'}
+            />
           </div>
         }
       />
