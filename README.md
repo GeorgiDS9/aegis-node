@@ -64,6 +64,10 @@ WAF rule toggles are **mock/simulation only**. No system calls, no kernel hooks,
 
 Runs embedded within the Next.js process. No external port, no remote connection, no credentials. Data stored at `data/vault/` — local only.
 
+> [!TIP]
+> **Architecture & Security Context:** For runtime flow diagrams covering WAF enforcement, vault logging, the Kinetic HITL gate, and the Red Team probe sequence, see [ARCHITECTURE_FLOWS.md](./ARCHITECTURE_FLOWS.md).
+> For adversarial probe methodology, threat model, and control verification outcomes, see [SECURITY_ADVISORY.md](./SECURITY_ADVISORY.md) (AEGIS-ADV-003).
+
 ---
 
 ## 🚀 Pre-Flight Setup
