@@ -5,7 +5,7 @@ interface StatusBadgeProps {
   icon?: LucideIcon
   type?: 'violet' | 'blue' | 'emerald' | 'red' | 'amber' | 'default'
   pulse?: boolean
-  size?: 'xs' | 'sm'
+  size?: 'xs' | 'sm' | 'md'
 }
 
 export function StatusBadge({ label, icon: Icon, type = 'violet', pulse = false, size = 'sm' }: StatusBadgeProps) {
@@ -21,12 +21,13 @@ export function StatusBadge({ label, icon: Icon, type = 'violet', pulse = false,
   const sizes = {
     xs: 'text-[8px] px-1.5 py-0.5',
     sm: 'text-[9px] px-2 py-0.5',
+    md: 'text-[10px] px-2.5 py-0.5',
   }
 
   const currentType = type;
 
   return (
-    <span className={`font-black uppercase rounded border tracking-[0.15em] flex items-center gap-1.5 ${styles[currentType]} ${sizes[size]}`}>
+    <span className={`font-black uppercase rounded border tracking-widest flex items-center gap-1.5 ${styles[currentType]} ${sizes[size]}`}>
       {pulse && <span className={`h-1 w-1 rounded-full animate-pulse ${currentType === 'emerald' ? 'bg-emerald-400' : 'bg-current'}`} />}
       {Icon && <Icon className={size === 'xs' ? "h-2 w-2" : "h-2.5 w-2.5"} />}
       {label}
