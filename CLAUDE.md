@@ -74,6 +74,22 @@ Maintain thin entrypoints. Logic must be extracted once a file exceeds approx. 1
 - **Colocation:** One-off hooks or components stay next to the feature until reuse is required across multiple routes.
 - **Server-First:** Prioritize Server Actions over Client-side fetching to protect local hardware data.
 
+## 4.1 UI Consistency & Tactical Sizing
+
+Strict adherence to the "Mission Control" aesthetic is mandatory. Do not use ad-hoc Tailwind classes for typography or status markers if a primitive exists.
+
+- **Component Reuse:** Prioritize `AegisButton`, `StatusBadge`, `SystemLabel`, and `SeverityTag`. 
+- **Component Lifecycle:** If a specific UI pattern or style (e.g., a specific glow+border combo) is used more than twice, it MUST be extracted into a reusable component in `src/components/ui/`.
+- **Surgical Font Scale:**
+  - **11px (Black/Uppercase):** Primary card headers and terminal titles (e.g., `Remediation_Protocol`).
+  - **10px (Black/Uppercase):** Card-level status indicators (e.g., `SIMULATION`, `LIVE`, `STANDBY`). Use `size="md"` for badges.
+  - **10px (Mono/Medium):** Metadata labels and system info (Standard `SystemLabel` default).
+  - **9px (Black/Uppercase):** Internal item tags and row-level markers (e.g., `CRITICAL`, `HITL: ACTIVE`, `RESTRICTED`). Use `size="sm"` for badges.
+- **Color Discipline:** 
+  - **Violet-600/500:** Active protocol engagement / AI streams.
+  - **Slate-800/900:** Passive/Standby containers and neutral feeds.
+  - **Emerald/Amber/Red:** Functional status only (Success/Sync/Alert). 
+
 ## 5. Operational Commands
 
 - `npm run dev` - Start UI
