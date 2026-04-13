@@ -18,22 +18,22 @@ function makeResponse(status: number, headers: Record<string, string> = {}): Res
 describe('formatProbeResult', () => {
   it('formats pass with ✓', () => {
     const r: ProbeResult = { label: 'WAF-SQLi', status: 'pass', detail: 'enforced' }
-    expect(formatProbeResult(r)).toBe('[SCOUT] WAF-SQLi: enforced ✓')
+    expect(formatProbeResult(r)).toBe('[PROBE] WAF-SQLi: enforced ✓')
   })
 
   it('formats fail with ✗', () => {
     const r: ProbeResult = { label: '.env file', status: 'fail', detail: 'EXPOSED' }
-    expect(formatProbeResult(r)).toBe('[SCOUT] .env file: EXPOSED ✗')
+    expect(formatProbeResult(r)).toBe('[PROBE] .env file: EXPOSED ✗')
   })
 
   it('formats warn with ⚠', () => {
     const r: ProbeResult = { label: 'WAF-RATE', status: 'warn', detail: 'disabled' }
-    expect(formatProbeResult(r)).toBe('[SCOUT] WAF-RATE: disabled ⚠')
+    expect(formatProbeResult(r)).toBe('[PROBE] WAF-RATE: disabled ⚠')
   })
 
   it('formats info with →', () => {
     const r: ProbeResult = { label: 'Port 3000 (App)', status: 'info', detail: 'OPEN' }
-    expect(formatProbeResult(r)).toBe('[SCOUT] Port 3000 (App): OPEN →')
+    expect(formatProbeResult(r)).toBe('[PROBE] Port 3000 (App): OPEN →')
   })
 })
 

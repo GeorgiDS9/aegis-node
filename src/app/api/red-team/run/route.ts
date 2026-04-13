@@ -70,41 +70,41 @@ export async function GET(req: NextRequest): Promise<Response> {
       const emit = (line: string) =>
         controller.enqueue(enc.encode(line + '\n'))
 
-      // ── Phase 1: SCOUT ─────────────────────────────────────────
-      emit('[SCOUT] Initiating red team probe sequence...')
-      emit('[SCOUT] ──────────────────────────────────────────────')
-      emit('[SCOUT] Phase 1/5 — WAF Coverage Audit')
+      // ── Phase 1: PROBE ─────────────────────────────────────────
+      emit('[PROBE] Initiating red team probe sequence...')
+      emit('[PROBE] ──────────────────────────────────────────────')
+      emit('[PROBE] Phase 1/5 — WAF Coverage Audit')
 
       const wafResults = probeWafRules(enabledRules)
       for (const r of wafResults) emit(formatProbeResult(r))
 
-      emit('[SCOUT] Phase 2/5 — Auth Boundary Sweep')
+      emit('[PROBE] Phase 2/5 — Auth Boundary Sweep')
 
       const authResults = await probeAuthBoundary(baseUrl)
       for (const r of authResults) emit(formatProbeResult(r))
 
-      emit('[SCOUT] Phase 3/5 — Port Survey')
+      emit('[PROBE] Phase 3/5 — Port Survey')
 
       const portResults = await probePorts(SCAN_PORTS)
       for (const r of portResults) emit(formatProbeResult(r))
 
-      emit('[SCOUT] Phase 4/5 — Sensitive File Exposure')
+      emit('[PROBE] Phase 4/5 — Sensitive File Exposure')
 
       const fileResults = await probeFileExposure(baseUrl)
       for (const r of fileResults) emit(formatProbeResult(r))
 
-      emit('[SCOUT] Phase 5/5 — Security Header Audit')
+      emit('[PROBE] Phase 5/5 — Security Header Audit')
 
       const headerResults = await probeSecurityHeaders(baseUrl)
       for (const r of headerResults) emit(formatProbeResult(r))
 
-      emit('[SCOUT] ──────────────────────────────────────────────')
-      emit('[SCOUT] Scout sequence complete.')
+      emit('[PROBE] ──────────────────────────────────────────────')
+      emit('[PROBE] Probe sequence complete.')
       emit('')
 
-      // ── Phase 2: ATTACK (AI posture assessment) ─────────────────
-      emit('[ATTACK] ─────────────────────────────────────────────')
-      emit('[ATTACK] Forwarding findings to AI analyst...')
+      // ── Phase 2: ASSESS (AI posture assessment) ─────────────────
+      emit('[ASSESS] ─────────────────────────────────────────────')
+      emit('[ASSESS] Forwarding findings to AI analyst...')
       emit('')
 
       const allFindings: ProbeResult[] = [
@@ -131,7 +131,7 @@ export async function GET(req: NextRequest): Promise<Response> {
         })
 
         if (!ollamaRes.ok || !ollamaRes.body) {
-          emit('[ATTACK] AI analyst offline — Ollama unreachable. Manual review required.')
+          emit('[ASSESS] AI analyst offline — Ollama unreachable. Manual review required.')
         } else {
           const reader = ollamaRes.body.getReader()
           const dec    = new TextDecoder()
@@ -153,21 +153,21 @@ export async function GET(req: NextRequest): Promise<Response> {
           }
         }
       } catch {
-        emit('\n[ATTACK] AI analyst offline — Ollama unreachable. Manual review required.')
+        emit('\n[ASSESS] AI analyst offline — Ollama unreachable. Manual review required.')
       }
 
       emit('')
       emit('')
 
-      // ── Phase 3: AUDIT ─────────────────────────────────────────
+      // ── Phase 3: VERIFY ─────────────────────────────────────────
       const failCount = allFindings.filter((r) => r.status === 'fail').length
       const warnCount = allFindings.filter((r) => r.status === 'warn').length
       const passCount = allFindings.filter((r) => r.status === 'pass').length
 
-      emit('[AUDIT] ──────────────────────────────────────────────')
-      emit('[AUDIT] Probe sequence complete.')
-      emit(`[AUDIT] ${passCount} controls verified | ${warnCount} advisories | ${failCount} failures`)
-      emit('[AUDIT] All probes read-only. No system state was modified.')
+      emit('[VERIFY] ──────────────────────────────────────────────')
+      emit('[VERIFY] Probe sequence complete.')
+      emit(`[VERIFY] ${passCount} controls verified | ${warnCount} advisories | ${failCount} failures`)
+      emit('[VERIFY] All probes read-only. No system state was modified.')
 
       controller.close()
     },

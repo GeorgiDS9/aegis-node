@@ -15,7 +15,7 @@ export function formatProbeResult(r: ProbeResult): string {
     warn: '⚠',
     info: '→',
   }
-  return `[SCOUT] ${r.label}: ${r.detail} ${sym[r.status]}`
+  return `[PROBE] ${r.label}: ${r.detail} ${sym[r.status]}`
 }
 
 // ── WAF rule coverage ─────────────────────────────────────────────
