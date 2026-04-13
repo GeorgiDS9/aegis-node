@@ -139,15 +139,25 @@ export function useAegisPulse(initial?: PulseData) {
 }
 
 // ── Red Team probe hook ───────────────────────────────────────────
+export type RedTeamStatus = 'STANDBY' | 'PROBING' | 'ASSESSING' | 'VERIFYING' | 'VERIFIED' | 'DRIFT_DETECTED' | 'ABORTED'
+
 export function useRedTeam() {
   const [output, setOutput]   = useState<string>('')
   const [running, setRunning] = useState<boolean>(false)
+  const [status, setStatus]   = useState<RedTeamStatus>('STANDBY')
   const abortRef = useRef<AbortController | null>(null)
 
-  const commence = useCallback(async () => {
+  const commerce = useCallback(async () => {
     if (running) return
+    
+    // Force kill any existing/stale operations
+    if (abortRef.current) {
+      abortRef.current.abort()
+    }
+    
     setOutput('')
     setRunning(true)
+    setStatus('PROBING')
     abortRef.current = new AbortController()
 
     try {
@@ -157,6 +167,8 @@ export function useRedTeam() {
 
       if (!res.ok || !res.body) {
         setOutput('Red Team Engine offline — route unreachable.')
+        setStatus('STANDBY')
+        setRunning(false)
         return
       }
 
@@ -166,11 +178,32 @@ export function useRedTeam() {
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
-        setOutput((prev) => prev + decoder.decode(value, { stream: true }))
+        const chunk = decoder.decode(value, { stream: true })
+        
+        setOutput((prev) => {
+          const next = prev + chunk
+          
+          // Phase detection
+          if (next.includes('[VERIFY]')) setStatus('VERIFYING')
+          else if (next.includes('[ASSESS]')) setStatus('ASSESSING')
+          else if (next.includes('[PROBE]')) setStatus('PROBING')
+
+          // Outcome detection
+          if (next.toLowerCase().includes('drift detected') || next.toLowerCase().includes('mismatch')) {
+            setStatus('DRIFT_DETECTED')
+          }
+          
+          return next
+        })
       }
+      
+      // Finalize status - Force 'VERIFIED' only if drift wasn't triggered
+      setStatus(prev => prev === 'DRIFT_DETECTED' ? 'DRIFT_DETECTED' : 'VERIFIED')
+
     } catch (err: unknown) {
       if (err instanceof Error && err.name !== 'AbortError') {
         setOutput((prev) => prev + '\n[ERROR: Probe sequence disrupted]')
+        setStatus('STANDBY')
       }
     } finally {
       setRunning(false)
@@ -180,9 +213,10 @@ export function useRedTeam() {
   const abort = useCallback(() => {
     abortRef.current?.abort()
     setRunning(false)
+    setStatus('ABORTED')
   }, [])
 
-  return { output, running, commence, abort }
+  return { output, running, status, commence: commerce, abort }
 }
 
 export function useVaultSearch() {
