@@ -19,6 +19,7 @@ export default function NotFound() {
             </div>
           </div>
 
+
           {/* ⬢ ERROR TEXT */}
           <div className="space-y-4">
             <div className="space-y-1">
