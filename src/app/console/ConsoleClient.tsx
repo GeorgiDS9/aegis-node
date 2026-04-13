@@ -41,9 +41,6 @@ export default function ConsoleClient({
   initialLogs,
   initialWafState,
 }: Props) {
-
-  throw new Error("UNAUTHORIZED_KERNEL_ACCESS: Memory parity error at 0x000F42")
-
   const [authorizedCmds, setAuthorizedCmds]     = useState<Map<string, KineticCommand>>(new Map());
   const [patchModalOpen, setPatchModalOpen]      = useState<boolean>(false);
   const [suppressedCloudIds, setSuppressedCloudIds] = useState<Set<string>>(new Set());
