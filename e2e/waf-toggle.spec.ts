@@ -3,11 +3,13 @@ import fs from 'fs'
 import path from 'path'
 import { MOCK_HEARTBEAT } from './fixtures/mock-heartbeat'
 
-test.beforeEach(async ({ page, context }) => {
-  await context.clearCookies()
+test.beforeEach(async ({ page }) => {
+  // Clear persistent WAF disk state to ensure clean test environment.
+  // AdaptiveShield automatically syncs this clean disk state over to the cookie on mount.
   try {
-    fs.writeFileSync(path.resolve(process.cwd(), 'data/.waf-config.json'), '{}')
+    fs.unlinkSync(path.resolve(process.cwd(), 'data/.waf-config.json'))
   } catch {}
+
   await page.route('/api/heartbeat', (route) =>
     route.fulfill({
       status:      200,
