@@ -37,7 +37,6 @@ Protocol Definition: Vanguard is a decentralized intelligence grid providing rea
 > Aegis Node - Login Page
 
 ### ![Aegis Node - Login Page](./docs/assets/aegis-node-login.png)
-
 ---
 
 ## 🛠️ Technical Stack
@@ -45,6 +44,7 @@ Protocol Definition: Vanguard is a decentralized intelligence grid providing rea
 - **Framework:** Next.js 15 (App Router / React 18)
 - **Engine:** Ollama (Llama-3-8B-Q4) for Local Intelligence
 - **Database:** LanceDB (Embedded Vector Store for Local Sovereignty)
+- **State/Rate-Limiting:** Upstash Redis (Global Economic Circuit Breakers)
 - **Sandbox:** OrbStack (Containerized Node.js Environment)
 - **Styling:** Tailwind CSS + Lucide React
 
@@ -67,6 +67,7 @@ Protocol Definition: Vanguard is a decentralized intelligence grid providing rea
 - **Vanguard Protocol Integration:** Cloud alert feed from Vanguard is ingested on every heartbeat. Alerts are stable-ID'd via content hash, acknowledged to disk (`data/.ack-file.json`), and filtered from the Cloud Queue after deploy.
 - **Server-First Architecture:** All hardware reads, vault writes, and WAF config persistence run as Next.js Server Actions. No sensitive system data is fetched client-side. The Edge Runtime gate runs before server logic, not inside it.
 - **Streaming AI Output:** All AI responses (remediation plans, threat scans, red team posture assessment) stream token-by-token via `ReadableStream`. The UI appends chunks in real time — no full-response wait.
+- **Economic Circuit Breaker (Upstash):** Edge-compatible state management via Redis to enforce usage quotas. Designed to prevent compute exhaustion by limiting intensive operations (like Red Team probes) to 5 executions per rolling hour per client IP.
 - **Modular Extraction Pattern & SoC:** Files approaching ~150 lines are split into [feature].types.ts, [feature].hooks.ts, and [feature].utils.ts. This maintains strict SoC, keeping each concern independently testable and the UI declarative while isolating business logic to enable high-coverage unit testing.
 
 ---
@@ -108,6 +109,7 @@ Runs embedded within the Next.js process. No external port, no remote connection
 - [x] **CI/CD:** GitHub Actions — Security Audit, ESLint, TypeScript strict check, and Vitest on every push to `main`.
 - [x] **Architecture & Security Docs:** `ARCHITECTURE_FLOWS.md` (8 Mermaid diagrams), `SECURITY_ADVISORY.md` (AEGIS-ADV-003), `TECHNICAL_ADVISORY.md`.
 - [x] **Playwright e2e:** Console layout, Red Team PROBE/ASSESS/VERIFY flow, WAF toggle → badge change, Defense Log scan trigger.
+- [ ] **Stateful Security Enforcement:** Integrate `@upstash/redis` within the Edge middleware to provide a shared counter for per-IP rate limiting and Red Team probe circuit breaking (Global state persistence).
 - [ ] **Auth hardening (optional):** Consider replacing HMAC session cookie with a lightweight provider (e.g. Clerk) if multi-user or SSO support is needed; current single-operator posture is sufficient for local node use.
 
 ---
