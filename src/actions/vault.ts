@@ -59,7 +59,18 @@ export async function logRemediation(
       `${entry.cve_id} ${entry.target} ${entry.action} ${entry.outcome}`
     )
 
-    await table.add([{ ...entry, vector }])
+    // Field order must match the schema defined in initVault — vector second.
+    await table.add([{
+      id:        entry.id,
+      vector,
+      cve_id:    entry.cve_id,
+      target:    entry.target,
+      action:    entry.action,
+      risk:      entry.risk,
+      outcome:   entry.outcome,
+      source:    entry.source,
+      timestamp: entry.timestamp,
+    }])
     return { logged: true }
   } catch (err) {
     console.error('[VAULT] Log failed:', err)
@@ -136,6 +147,7 @@ async function generateEmbedding(text: string): Promise<number[]> {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ model, prompt: text }),
+      signal: AbortSignal.timeout(5_000),
     })
 
     if (!res.ok) throw new Error(`Ollama /api/embeddings returned ${res.status}`)

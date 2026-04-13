@@ -30,6 +30,7 @@ Aegis is the Active Defense node of the Vanguard Protocol. It provides autonomou
 - **Commit Metadata:** never include "Co-authored-by: Claude", "Co-Authored-By:", or any AI attribution tags in commit messages.
   - **How to apply:** Write all commit messages without any trailing attribution lines. This applies to every commit, on every branch, always.
 - **No Merges:** Pushing to remote is encouraged, but merging is restricted to the Architect (User).
+- **Branch Hygiene Gate:** Before creating any new branch, run `git branch` and check for unmerged feature branches (branches not present in `main`). If any exist, stop and alert the Architect. List the unmerged branches and wait for explicit confirmation ("go ahead" or similar) before proceeding. This prevents divergence conflicts where main evolves while an older branch is still open.
 - **Modular Architecture:**
   - **Extraction:** If a component or file exceeds approximately 200 lines, extract logic into specialized sub-files within the same directory:
     - `[feature].types.ts` (Interfaces/Types)

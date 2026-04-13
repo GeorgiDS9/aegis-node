@@ -40,8 +40,6 @@ Protocol Definition: Vanguard is a decentralized intelligence grid providing rea
 
 ---
 
----
-
 ## 🛠️ Technical Stack
 
 - **Framework:** Next.js 15 (App Router / React 18)
@@ -86,9 +84,9 @@ Protocol Definition: Vanguard is a decentralized intelligence grid providing rea
 
 Aegis reads the perimeter — it does not own it.
 
-#### Adaptive Shielding — Simulation Layer
+#### Adaptive Shielding — Real Enforcement
 
-WAF rule toggles are **mock/simulation only**. No system calls, no kernel hooks, no network configuration is modified. Each toggle writes an enforcement event to LanceDB for audit trail. The **Simulation** badge in the UI makes this explicit at all times.
+WAF rule toggles are **live middleware enforcement**. Each toggle persists the rule state to `data/.waf-config.json` (disk) and syncs it to the `aegis-waf` httpOnly cookie that Next.js middleware reads on every request. Enabled rules are applied in the Edge Runtime before any route logic — matched requests receive a `403` with `X-Aegis-WAF: <rule-id>`. Every toggle is also logged to the vault for audit continuity. See `TECHNICAL_ADVISORY.md` for WAF-RATE and POST body inspection constraints.
 
 #### Vault (LanceDB)
 
@@ -109,9 +107,8 @@ Runs embedded within the Next.js process. No external port, no remote connection
 - [x] **Unit Test Suite:** 119 Vitest tests across 6 suites — all offline, injectable dependencies. WAF patterns, probe logic, kinetic bridge, vault, alert IDs, Defense Log utils.
 - [x] **CI/CD:** GitHub Actions — Security Audit, ESLint, TypeScript strict check, and Vitest on every push to `main`.
 - [x] **Architecture & Security Docs:** `ARCHITECTURE_FLOWS.md` (8 Mermaid diagrams), `SECURITY_ADVISORY.md` (AEGIS-ADV-003), `TECHNICAL_ADVISORY.md`.
-- [ ] **Playwright e2e:** COMMENCE PROBE flow, WAF toggle → badge change, Defense Log scan trigger — tracked for next branch.
-- [ ] **Auth hardening review:** Re-evaluate HMAC session cookie approach against a lightweight auth library; preserve `/console` and `/api/*` protection posture.
-- [ ] **WAF-RATE enforcement:** Persistent rate-limit state requires an upstream reverse proxy or edge KV store — out of scope for the current Edge Runtime model.
+- [x] **Playwright e2e:** Console layout, Red Team PROBE/ASSESS/VERIFY flow, WAF toggle → badge change, Defense Log scan trigger.
+- [ ] **Auth hardening (optional):** Consider replacing HMAC session cookie with a lightweight provider (e.g. Clerk) if multi-user or SSO support is needed; current single-operator posture is sufficient for local node use.
 
 ---
 
@@ -262,17 +259,18 @@ Current coverage: **119 tests across 6 files** — all offline, no Ollama or Lan
 | `alert-id`          | 11    | Stable content-hash alert ID generation                       |
 | `vault`             | 10    | LanceDB logging, embedding fallback, semantic search          |
 
-**End-to-end (Playwright)** — _coming in the next branch_
+**End-to-end (Playwright)**
 
-Playwright e2e tests for the COMMENCE PROBE flow, WAF toggle → badge change, and Defense Log scan trigger are tracked for the next release.
+18 e2e tests across three specs — console layout, Red Team PROBE/ASSESS/VERIFY flow, and WAF toggle → badge change. All API calls are mocked for deterministic offline CI runs. Auth is handled via a global setup that logs in once and shares session state across specs.
 
 **CI (GitHub Actions)**
 
-Four gates run in parallel on every push:
+Five gates run in parallel on every push:
 
-| Job                     | What it checks                      |
-| ----------------------- | ----------------------------------- |
-| Security Audit          | `npm audit --audit-level=high`      |
-| Clinical Code Standards | ESLint strict (Next.js flat config) |
-| TypeScript Strict Check | `tsc --noEmit`                      |
-| Unit Tests              | Vitest (`npm test`)                 |
+| Job                     | What it checks                                     |
+| ----------------------- | -------------------------------------------------- |
+| Security Audit          | `npm audit --audit-level=high`                     |
+| Clinical Code Standards | ESLint strict (Next.js flat config)                |
+| TypeScript Strict Check | `tsc --noEmit`                                     |
+| Unit Tests              | Vitest (`npm test`)                                |
+| E2E Tests               | Playwright — console, red team, WAF toggle (mocked)|

@@ -50,22 +50,26 @@ test('enabling then disabling a rule restores counter to 0/5 On', async ({ page 
   await page.goto('/console')
 
   await page.getByRole('button', { name: /enable block sql injection/i }).click()
-  await expect(page.getByText('1/5 On')).toBeVisible({ timeout: 8_000 })
+  // Wait for server action to complete — aria-label flips once loggingRule clears
+  await expect(page.getByRole('button', { name: /disable block sql injection/i })).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByText('1/5 On')).toBeVisible()
 
   await page.getByRole('button', { name: /disable block sql injection/i }).click()
-  await expect(page.getByText('0/5 On')).toBeVisible({ timeout: 8_000 })
+  await expect(page.getByRole('button', { name: /enable block sql injection/i })).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByText('0/5 On')).toBeVisible()
 })
 
 test('disabling a rule appends a SUSPEND entry to the Transmission Log', async ({ page }) => {
   await page.goto('/console')
 
-  // Enable first
+  // Enable first — wait for server action to complete
   await page.getByRole('button', { name: /enable block path traversal/i }).click()
-  await expect(page.getByText('1/5 On')).toBeVisible({ timeout: 8_000 })
+  await expect(page.getByRole('button', { name: /disable block path traversal/i })).toBeVisible({ timeout: 15_000 })
+  await expect(page.getByText('1/5 On')).toBeVisible()
 
   // Then disable
   await page.getByRole('button', { name: /disable block path traversal/i }).click()
   await expect(
     page.getByText(/▼ SUSPEND Block Path Traversal/i),
-  ).toBeVisible({ timeout: 8_000 })
+  ).toBeVisible({ timeout: 15_000 })
 })
