@@ -68,15 +68,93 @@ Runs embedded within the Next.js process. No external port, no remote connection
 > For adversarial probe methodology, threat model, and control verification outcomes, see [SECURITY_ADVISORY.md](./SECURITY_ADVISORY.md) (AEGIS-ADV-003).
 > For engineering rationale behind the pfctl advisory model, WAF Edge Runtime constraints, and vault zero-vector fallback, see [TECHNICAL_ADVISORY.md](./TECHNICAL_ADVISORY.md).
 
+## ⚡ Red Team Validation
+
+Aegis includes a built-in self-probe capability that runs a read-only Scout → Attack → Audit sequence against the local node. It verifies WAF coverage, auth boundary behavior, open ports, sensitive file exposure, and security header posture — then feeds all findings to the local Ollama instance for AI-driven risk summarization.
+
+See [`SECURITY_ADVISORY.md`](./SECURITY_ADVISORY.md) (AEGIS-ADV-003) for probe methodology, threat model, and control verification outcomes.
+
 ---
 
-## 🚀 Pre-Flight Setup
+## 🚦 Getting Started
 
-### 1. Prerequisites
+Follow this four-stage protocol to initialize the Aegis Node and verify its active defense layers.
 
-- **OrbStack:** Optimized Docker/Sandbox for Apple Silicon.
-- **Ollama:** Native MacOS AI Engine.
-- **AI Model:** Pull the 4-bit Llama-3 model:
-  ```bash
-  ollama pull llama3:8b-instruct-q4_K_M
-  ```
+### 1. Environment Initialization
+
+```bash
+git clone https://github.com/GeorgiDS9/aegis-node
+cd aegis-node
+npm install
+```
+
+### 2. Infrastructure Configuration
+
+Aegis requires no API keys — all intelligence runs locally. You will need:
+
+**OrbStack** (Docker sandbox, Apple Silicon optimized):
+
+```bash
+# Install from https://orbstack.dev, then:
+docker-compose up
+```
+
+**Ollama** (local AI engine, macOS native):
+
+```bash
+# Install from https://ollama.com, then pull the inference model:
+ollama pull llama3:8b-instruct-q4_K_M
+```
+
+Ollama must be running on `localhost:11434` before starting the dev server. The application bridges to it at `host.docker.internal:11434` from inside the OrbStack sandbox.
+
+### 3. Development Mode
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) for the landing page. The defense console is at `/console`.
+
+### 4. Automated Security Audits
+
+Aegis uses **Vitest** for fast offline unit tests covering probe logic, WAF pattern matching, kinetic command generation, vault operations, and Defense Log utilities. **GitHub Actions** runs lint, TypeScript strict check, security audit, and unit tests on every push and pull request to `main`.
+
+**Unit tests (Vitest)**
+
+```bash
+npm test               # single run
+npm test -- --watch    # watch mode
+```
+
+Current coverage: **119 tests across 6 files** — all offline, no Ollama or LanceDB required.
+
+| Suite | Tests | What it covers |
+|-------|-------|----------------|
+| `waf-patterns` | 26 | WAF regex patterns (SQLi, XSS, PATH, BOT) |
+| `defense-log.utils` | 24 | Log mapping, time formatting, AI context builder |
+| `red-team-probes` | 34 | WAF audit, auth boundary, port survey, file exposure, headers |
+| `kinetic-bridge` | 14 | pfctl command derivation and HITL defaults |
+| `alert-id` | 11 | Stable content-hash alert ID generation |
+| `vault` | 10 | LanceDB logging, embedding fallback, semantic search |
+
+**End-to-end (Playwright)** — _coming in the next branch_
+
+Playwright e2e tests for the COMMENCE PROBE flow, WAF toggle → badge change, and Defense Log scan trigger are tracked for the next release.
+
+**CI (GitHub Actions)**
+
+Four gates run in parallel on every push:
+
+| Job | What it checks |
+|-----|----------------|
+| Security Audit | `npm audit --audit-level=high` |
+| Clinical Code Standards | ESLint strict (Next.js flat config) |
+| TypeScript Strict Check | `tsc --noEmit` |
+| Unit Tests | Vitest (`npm test`) |
+
+---
+
+## 🧭 Engineering Philosophy
+
+**Aegis Node** demonstrates that **Active Defense** does not require autonomous execution. By applying a **Human-in-the-Loop (HITL)** gate to every remediation command and keeping all intelligence local (no cloud APIs, no telemetry), this project provides a blueprint for **governed edge security** that prioritizes **Operator Authority**, **Execution Safety**, and **Local Sovereignty**.
