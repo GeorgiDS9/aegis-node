@@ -6,7 +6,7 @@ This document captures the core runtime flows that define Aegis Node's behavior:
 - Vault logging and semantic search via LanceDB
 - Kinetic command HITL gate — advisory-only pfctl model
 - AI-driven threat surface analysis and streaming posture assessment
-- Red team probe sequence — Scout, Attack, Audit
+- Red team probe sequence — Probe, Assess, Verify
 - Heartbeat polling and system telemetry
 
 Use this file as the engineering source of truth for flow-level behavior.  

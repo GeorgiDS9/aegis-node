@@ -62,7 +62,7 @@ Protocol Definition: Vanguard is a decentralized intelligence grid providing rea
 - **HITL Kinetic Gate:** pfctl commands are derived from Vanguard alerts by `buildKineticCommands()` with `authorized: false`. No command executes automatically — the operator must Authorize, open PatchModal, and copy-paste into their own terminal.
 - **Vault Memory (LanceDB):** Every remediation event is embedded via Ollama (4096-dim) and stored as a `RemediationSignature`. Zero-vector fallback ensures logging continues when Ollama is offline. The vault is append-only and supports semantic similarity search.
 - **Local AI Inference (Ollama):** All LLM calls route to `host.docker.internal:11434` — no Anthropic, OpenAI, or external API. The model (`llama3:8b-instruct-q4_K_M`) runs inside the OrbStack sandbox. No prompt data or telemetry leaves the host network.
-- **Red Team Self-Probe:** Five-phase read-only probe sequence (WAF coverage → auth boundary → port survey → file exposure → security headers) followed by AI posture assessment. All probe functions accept injected fetcher/connector interfaces for offline testability.
+- **Red Team Self-Probe:** Read-only Probe → Assess → Verify sequence. The Probe phase runs five checks (WAF coverage → auth boundary → port survey → file exposure → security headers), followed by an AI posture assessment and a Verify summary. All probe functions accept injected fetcher/connector interfaces for offline testability.
 - **Heartbeat Polling:** `useAegisPulse()` polls `/api/heartbeat` every 5 seconds via `Promise.all` across four data sources: `sysctl`/`vm_stat` (hardware metrics), `pfctl -s info` (firewall), file integrity scanner (edge alerts), and Vanguard feed (cloud alerts).
 - **Vanguard Protocol Integration:** Cloud alert feed from Vanguard is ingested on every heartbeat. Alerts are stable-ID'd via content hash, acknowledged to disk (`data/.ack-file.json`), and filtered from the Cloud Queue after deploy.
 - **Server-First Architecture:** All hardware reads, vault writes, and WAF config persistence run as Next.js Server Actions. No sensitive system data is fetched client-side. The Edge Runtime gate runs before server logic, not inside it.
@@ -103,8 +103,8 @@ Runs embedded within the Next.js process. No external port, no remote connection
 - [x] **Vanguard Protocol Integration:** Cloud alert ingestion, stable content-hash IDs, disk-persisted acknowledgement, and immediate client-side suppression after deploy.
 - [x] **Adaptive Shield (WAF Toggles):** Per-rule enable/disable with disk + cookie persistence, logged to vault on every change.
 - [x] **Defense Log + AI Threat Scan:** Live vault feed with on-demand AI posture assessment streamed from Ollama. Captured in collapsible Threat Analysis blocks.
-- [x] **Red Team Probe Sequence:** Five-phase read-only self-probe (Probe → Assess → Verify) with streaming terminal output and AI synthesis.
-- [x] **Unit Test Suite:** 119 Vitest tests across 6 suites — all offline, injectable dependencies. WAF patterns, probe logic, kinetic bridge, vault, alert IDs, Defense Log utils.
+- [x] **Red Team Probe Sequence:** Read-only self-probe (Probe → Assess → Verify) with streaming terminal output and AI synthesis.
+- [x] **Unit Test Suite:** Vitest suites — all offline, injectable dependencies. WAF patterns, probe logic, kinetic bridge, vault, alert IDs, Defense Log utils.
 - [x] **CI/CD:** GitHub Actions — Security Audit, ESLint, TypeScript strict check, and Vitest on every push to `main`.
 - [x] **Architecture & Security Docs:** `ARCHITECTURE_FLOWS.md` (8 Mermaid diagrams), `SECURITY_ADVISORY.md` (AEGIS-ADV-003), `TECHNICAL_ADVISORY.md`.
 - [x] **Playwright e2e:** Console layout, Red Team PROBE/ASSESS/VERIFY flow, WAF toggle → badge change, Defense Log scan trigger.
@@ -248,20 +248,20 @@ npm test               # single run
 npm test -- --watch    # watch mode
 ```
 
-Current coverage: **119 tests across 6 files** — all offline, no Ollama or LanceDB required.
+All tests are offline — no Ollama or LanceDB required.
 
-| Suite               | Tests | What it covers                                                |
-| ------------------- | ----- | ------------------------------------------------------------- |
-| `waf-patterns`      | 26    | WAF regex patterns (SQLi, XSS, PATH, BOT)                     |
-| `defense-log.utils` | 24    | Log mapping, time formatting, AI context builder              |
-| `red-team-probes`   | 34    | WAF audit, auth boundary, port survey, file exposure, headers |
-| `kinetic-bridge`    | 14    | pfctl command derivation and HITL defaults                    |
-| `alert-id`          | 11    | Stable content-hash alert ID generation                       |
-| `vault`             | 10    | LanceDB logging, embedding fallback, semantic search          |
+| Suite               | What it covers                                                |
+| ------------------- | ------------------------------------------------------------- |
+| `waf-patterns`      | WAF regex patterns (SQLi, XSS, PATH, BOT)                     |
+| `defense-log.utils` | Log mapping, time formatting, AI context builder              |
+| `red-team-probes`   | WAF audit, auth boundary, port survey, file exposure, headers |
+| `kinetic-bridge`    | pfctl command derivation and HITL defaults                    |
+| `alert-id`          | Stable content-hash alert ID generation                       |
+| `vault`             | LanceDB logging, embedding fallback, semantic search          |
 
 **End-to-end (Playwright)**
 
-18 e2e tests across three specs — console layout, Red Team PROBE/ASSESS/VERIFY flow, and WAF toggle → badge change. All API calls are mocked for deterministic offline CI runs. Auth is handled via a global setup that logs in once and shares session state across specs.
+Three specs — console layout, Red Team PROBE/ASSESS/VERIFY flow, and WAF toggle → badge change. All API calls are mocked for deterministic offline CI runs. Auth is handled via a global setup that logs in once and shares session state across specs.
 
 **CI (GitHub Actions)**
 
