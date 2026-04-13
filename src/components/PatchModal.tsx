@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback } from 'react'
-import { Zap, X, Terminal, CheckCircle, Loader2, ShieldAlert } from 'lucide-react'
+import { Zap, X, Terminal, CheckCircle, Loader2, ShieldAlert, Copy, Check } from 'lucide-react'
 import type { KineticCommand } from '@/types/aegis'
 import { logRemediation } from '@/actions/vault'
 import { acknowledgeCloudAlerts } from '@/actions/cloud-ack'
@@ -19,16 +19,26 @@ const RISK_COLOR: Record<KineticCommand['risk'], string> = {
 }
 
 export default function PatchModal({ commands, onClose, onDeployed }: Props) {
-  const [deploying, setDeploying] = useState<boolean>(false)
-  const [deployed, setDeployed]   = useState<boolean>(false)
+  const [deploying, setDeploying]   = useState<boolean>(false)
+  const [deployed, setDeployed]     = useState<boolean>(false)
+  const [copiedId, setCopiedId]     = useState<string | null>(null)
 
   const authorizedCommands = commands.filter((c) => c.authorized)
+
+  const handleCopy = useCallback(async (cmd: KineticCommand) => {
+    try {
+      await navigator.clipboard.writeText(cmd.command)
+      setCopiedId(cmd.alertId)
+      setTimeout(() => setCopiedId(null), 2000)
+    } catch {
+      // Clipboard not available (non-secure context) — silently ignore
+    }
+  }, [])
 
   const handleDeploy = useCallback(async () => {
     if (authorizedCommands.length === 0 || deploying) return
     setDeploying(true)
 
-    // Log each authorized command to vault and persist ack to disk
     const deployedIds = authorizedCommands.map((c) => c.alertId)
     await Promise.all(
       authorizedCommands.map((cmd) =>
@@ -106,9 +116,19 @@ export default function PatchModal({ commands, onClose, onDeployed }: Props) {
                 </div>
                 <div className="flex items-center gap-3 px-4 py-3">
                   <Terminal className="h-3.5 w-3.5 text-violet-400 flex-shrink-0" />
-                  <code className="text-[11px] font-mono text-violet-300 break-all">
+                  <code className="text-[11px] font-mono text-violet-300 break-all flex-1">
                     {cmd.command}
                   </code>
+                  <button
+                    onClick={() => handleCopy(cmd)}
+                    title="Copy command"
+                    className="flex-shrink-0 text-slate-600 hover:text-violet-400 transition-colors p-1 rounded"
+                  >
+                    {copiedId === cmd.alertId
+                      ? <Check className="h-3.5 w-3.5 text-emerald-400" />
+                      : <Copy className="h-3.5 w-3.5" />
+                    }
+                  </button>
                 </div>
               </div>
             ))
@@ -117,9 +137,14 @@ export default function PatchModal({ commands, onClose, onDeployed }: Props) {
 
         {/* Footer */}
         <div className="flex items-center justify-between px-6 py-4 border-t border-slate-800/60 bg-slate-950/40">
-          <p className="text-[9px] text-slate-600 uppercase tracking-widest">
-            {authorizedCommands.length} command{authorizedCommands.length !== 1 ? 's' : ''} authorized
-          </p>
+          <div className="flex flex-col gap-1">
+            <p className="text-[9px] text-slate-600 uppercase tracking-widest">
+              {authorizedCommands.length} command{authorizedCommands.length !== 1 ? 's' : ''} authorized
+            </p>
+            <p className="text-[8px] text-slate-700 uppercase tracking-widest">
+              Logged to vault — firewall execution requires sudo
+            </p>
+          </div>
           {deployed ? (
             <div className="flex items-center gap-2 text-emerald-400">
               <CheckCircle className="h-4 w-4" />
