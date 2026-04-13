@@ -17,13 +17,20 @@ export function formatRelativeTime(iso: string): string {
 }
 
 export function mapVaultToLogEntries(logs: VaultSearchResult[]): DefenseLogEntry[] {
-  return logs.map((r) => ({
-    id:        r.id,
-    timestamp: formatRelativeTime(r.timestamp),
-    type:      mapOutcomeToType(r.outcome),
-    source:    r.source,
-    message:   r.action,
-  }))
+  const seen = new Set<string>()
+  return logs
+    .filter((r) => {
+      if (seen.has(r.id)) return false
+      seen.add(r.id)
+      return true
+    })
+    .map((r) => ({
+      id:        r.id,
+      timestamp: formatRelativeTime(r.timestamp),
+      type:      mapOutcomeToType(r.outcome),
+      source:    r.source,
+      message:   r.action,
+    }))
 }
 
 export function buildScanContext(
