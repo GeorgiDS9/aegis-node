@@ -112,18 +112,18 @@ function RemediationQueue({
                 )}
 
                 {plans[alert.id] !== undefined && expanded.has(alert.id) && (
-                  <div className="mt-4 rounded-lg border border-violet-500/30 bg-[#0c1222] px-5 pb-5 shadow-[0_0_25px_-12px_rgba(139,92,246,0.2)] max-h-[500px] overflow-y-auto custom-scrollbar relative">
+                  <div className="mt-4 rounded-lg border border-slate-800 bg-[#0c1222] px-5 pb-5 shadow-lg max-h-[500px] overflow-y-auto custom-scrollbar relative">
                     <div 
-                      className="flex items-center justify-between mb-4 pb-3 border-b border-violet-500/10 sticky top-0 bg-[#0c1222] z-10 pt-4 cursor-pointer group/header"
+                      className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800/40 sticky top-0 bg-[#0c1222] z-10 pt-4 cursor-pointer group/header"
                       onClick={() => toggleExpand(alert.id)}
                     >
                       <div className="flex items-center gap-2.5">
-                        <div className={`h-2 w-2 rounded-full bg-violet-400 ${streamingIds.has(alert.id) ? 'animate-pulse' : ''}`} />
-                        <span className="text-[11px] font-black uppercase tracking-[0.25em] text-violet-400">
+                        <div className={`h-2 w-2 rounded-full bg-slate-500 ${streamingIds.has(alert.id) ? 'animate-pulse' : ''}`} />
+                        <span className="text-[11px] font-black uppercase tracking-[0.25em] text-slate-500">
                           Remediation_Protocol
                         </span>
                       </div>
-                      <ChevronRight className="h-4 w-4 text-slate-600 group-hover/header:text-violet-400 transition-transform rotate-90" />
+                      <ChevronRight className="h-4 w-4 text-slate-600 group-hover/header:text-slate-400 transition-transform rotate-90" />
                     </div>
                     <p className="text-[11px] font-medium text-slate-300 leading-relaxed whitespace-pre-wrap font-mono">
                       {plans[alert.id] || "Analyzing system state... ▋"}
@@ -205,9 +205,9 @@ function RemediationQueue({
                         )}
                       </div>
                       {cmd && (
-                        <div className="rounded-lg bg-slate-950 px-4 py-2.5 border border-slate-800/60 shadow-inner group/code">
-                          <code className="text-[11px] font-mono text-violet-400/80 break-all leading-relaxed">
-                            <span className="text-slate-700 mr-2 group-hover/code:text-violet-500 transition-colors">$</span>
+                        <div className="rounded-lg bg-slate-950 px-4 py-2.5 border border-slate-800 shadow-inner group/code">
+                          <code className="text-[11px] font-mono text-slate-300 break-all leading-relaxed">
+                            <span className="text-slate-700 mr-2 group-hover/code:text-slate-500 transition-colors">$</span>
                             {cmd.command}
                           </code>
                         </div>
