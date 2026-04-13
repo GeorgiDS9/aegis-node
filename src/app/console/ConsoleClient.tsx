@@ -178,7 +178,7 @@ export default function ConsoleClient({
           />
           <MetricCard
             icon={<Zap size={15} className="text-violet-400" />}
-            label="Threat Surface"
+            label="Active Alerts"
             value={`${alerts.filter((a: ScanAlert) => a.type !== "info").length + vanguardFeed.alerts.length} ACTIVE`}
             sub="Edge + Cloud Alerts"
             percent={100}
