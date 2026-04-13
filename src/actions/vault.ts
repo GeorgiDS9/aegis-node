@@ -21,7 +21,7 @@ async function getDb() {
 let _initPromise: Promise<{ initialized: boolean; error?: string }> | null = null;
 
 // ── Initialize vault and ensure table exists ──────────────────────
-export function initVault(): Promise<{ initialized: boolean; error?: string }> {
+export async function initVault(): Promise<{ initialized: boolean; error?: string }> {
   if (!_initPromise) {
     _initPromise = (async () => {
       try {
