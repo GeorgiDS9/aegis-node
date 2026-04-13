@@ -16,7 +16,7 @@ import { WAF_COOKIE_NAME } from "@/constants/waf-rules";
  * from the aegis-waf cookie (set by the waf-config server action). Each
  * enabled rule inspects the request URL and headers. POST bodies are not
  * inspected — Edge Runtime cannot consume a stream without destroying it.
- * See TECHNICAL_ADVISORY.MD for the full rationale.
+ * See TECHNICAL_ADVISOR.md for the full rationale.
  */
 
 // ── WAF patterns ──────────────────────────────────────────────────
@@ -28,7 +28,7 @@ const WAF_PATTERNS: Record<string, RegExp> = {
 }
 
 // WAF-RATE is acknowledged by the toggle but not enforceable in Edge Runtime
-// (no persistent cross-request state). Documented in TECHNICAL_ADVISORY.MD.
+// (no persistent cross-request state). Documented in TECHNICAL_ADVISOR.md.
 
 function enforceWaf(req: NextRequest): NextResponse | null {
   const raw = req.cookies.get(WAF_COOKIE_NAME)?.value

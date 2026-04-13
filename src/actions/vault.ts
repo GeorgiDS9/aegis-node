@@ -18,33 +18,45 @@ async function getDb() {
   return _db
 }
 
+let _initPromise: Promise<{ initialized: boolean; error?: string }> | null = null;
+
 // ── Initialize vault and ensure table exists ──────────────────────
-export async function initVault(): Promise<{ initialized: boolean; error?: string }> {
-  try {
-    const db = await getDb()
-    const tables = await db.tableNames()
+export function initVault(): Promise<{ initialized: boolean; error?: string }> {
+  if (!_initPromise) {
+    _initPromise = (async () => {
+      try {
+        const db = await getDb()
+        const tables = await db.tableNames()
 
-    if (!tables.includes(TABLE_NAME)) {
-      await db.createTable(TABLE_NAME, [
-        {
-          id: 'VAULT-INIT',
-          vector: Array<number>(EMBED_DIM).fill(0),
-          cve_id: 'INIT',
-          target: 'vault-bootstrap',
-          action: 'Schema initialization',
-          risk: 'NONE',
-          outcome: 'success',
-          source: 'EDGE',
-          timestamp: new Date().toISOString(),
-        },
-      ])
-    }
-
-    return { initialized: true }
-  } catch (err) {
-    console.error('[VAULT] Init failed:', err)
-    return { initialized: false, error: String(err) }
+        if (!tables.includes(TABLE_NAME)) {
+          try {
+            await db.createTable(TABLE_NAME, [
+              {
+                id: 'VAULT-INIT',
+                vector: Array<number>(EMBED_DIM).fill(0),
+                cve_id: 'INIT',
+                target: 'vault-bootstrap',
+                action: 'Schema initialization',
+                risk: 'NONE',
+                outcome: 'success',
+                source: 'EDGE',
+                timestamp: new Date().toISOString(),
+              },
+            ])
+          } catch (err: any) {
+            if (!String(err).includes('already exists')) {
+              throw err;
+            }
+          }
+        }
+        return { initialized: true }
+      } catch (err) {
+        console.error('[VAULT] Init failed:', err)
+        return { initialized: false, error: String(err) }
+      }
+    })();
   }
+  return _initPromise;
 }
 
 // ── Log a remediation to the vault ───────────────────────────────
@@ -52,6 +64,9 @@ export async function logRemediation(
   entry: Omit<RemediationSignature, 'vector'>
 ): Promise<{ logged: boolean; error?: string }> {
   try {
+    const initStatus = await initVault();
+    if (!initStatus.initialized) throw new Error(initStatus.error);
+
     const db = await getDb()
     const table = await db.openTable(TABLE_NAME)
 
@@ -83,6 +98,9 @@ export async function searchRemediations(
   query: string
 ): Promise<VaultSearchResult[]> {
   try {
+    const initStatus = await initVault();
+    if (!initStatus.initialized) return [];
+
     const db = await getDb()
     const table = await db.openTable(TABLE_NAME)
     const queryVector = await generateEmbedding(query)
@@ -111,6 +129,9 @@ export async function searchRemediations(
 
 export async function getDefenseLogs(): Promise<VaultSearchResult[]> {
   try {
+    const initStatus = await initVault();
+    if (!initStatus.initialized) return [];
+
     const db = await getDb()
     const table = await db.openTable(TABLE_NAME)
 
