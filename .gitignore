@@ -18,6 +18,7 @@ out/
 data/vault/
 data/.scan-baseline.json
 data/.cloud-acknowledged.json
+data/.waf-config.json
 *.lancedb
 *.db
 
