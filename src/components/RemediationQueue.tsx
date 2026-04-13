@@ -75,7 +75,7 @@ function RemediationQueue({
           ) : (
             activeAlerts.map((alert) => (
               <div key={alert.id} className="mb-3 last:mb-0">
-                <div className="p-4 rounded-xl bg-slate-950/40 border border-slate-800/80 flex justify-between items-center group hover:border-slate-700/60 transition-all">
+                <div className="p-4 rounded-xl bg-slate-950/40 border border-slate-800/80 flex justify-between items-center group transition-all">
                   <div className="min-w-0 pr-4 space-y-1.5" onClick={() => plans[alert.id] && toggleExpand(alert.id)}>
                     <div className="flex items-center gap-2.5">
                       <p className="text-[12px] font-black text-white uppercase tracking-widest leading-none">
@@ -169,7 +169,7 @@ function RemediationQueue({
                   const cmd = kineticCmds.find((c) => c.alertId === alert.id);
                   const isAuthorized = authorizedIds.has(alert.id);
                   return (
-                    <div key={alert.id} className="rounded-xl border border-slate-800 bg-slate-950/40 p-5 group/item hover:border-slate-700/60 transition-all">
+                    <div key={alert.id} className="rounded-xl border border-slate-800 bg-slate-950/40 p-5 group/item transition-all">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0 flex-1 space-y-2">
                           <div className="flex items-center gap-2.5">
