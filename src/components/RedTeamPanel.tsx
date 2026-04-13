@@ -48,8 +48,8 @@ function RedTeamPanel() {
       />
 
       <div className="flex items-start justify-between gap-4 mb-4">
-        <p className="text-[12px] font-medium text-slate-600 leading-relaxed max-w-[260px]">
-          Probe → Assess → Verify. Read-only probes against this edge node.
+        <p className="text-[12px] font-medium text-slate-600 leading-relaxed max-w-[500px]">
+          Probe → Assess → Verify. Read-only probes against this edge node.<br />
           No writes, no exploits, no network egress.
         </p>
         <AegisButton

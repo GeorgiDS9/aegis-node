@@ -2,7 +2,9 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Shield, Loader2, Lock } from "lucide-react";
+import { Shield, Lock } from "lucide-react";
+import { AegisButton } from "@/components/ui/AegisButton";
+import SystemLabel from "@/components/ui/SystemLabel";
 
 export default function LoginPage() {
   const [pin, setPin]         = useState<string>("");
@@ -11,8 +13,8 @@ export default function LoginPage() {
   const inputRef = useRef<HTMLInputElement>(null);
   const router   = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault();
     if (!pin.trim() || loading) return;
     setLoading(true);
     setError("");
@@ -47,16 +49,18 @@ export default function LoginPage() {
             <Shield className="h-8 w-8 text-violet-400" />
           </div>
           <div className="text-center">
-            <h1 className="text-[13px] font-black tracking-[0.25em] uppercase text-white">
+            <h1 className="text-[13px] font-black tracking-[0.25em] uppercase text-white leading-tight">
               Aegis Node
             </h1>
-            <p className="text-[9px] font-bold text-slate-600 uppercase tracking-widest mt-1">
-              Operator Authentication Required
-            </p>
+            <div className="mt-1">
+              <SystemLabel>
+                Operator Authentication Required
+              </SystemLabel>
+            </div>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="relative">
             <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-600" />
             <input
@@ -76,17 +80,15 @@ export default function LoginPage() {
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={!pin.trim() || loading}
-            className="w-full flex items-center justify-center gap-2 rounded-xl bg-violet-600 py-3.5 text-[11px] font-black uppercase tracking-widest text-white hover:bg-violet-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-          >
-            {loading
-              ? <Loader2 className="h-4 w-4 animate-spin" />
-              : <Shield className="h-4 w-4" />
-            }
-            Authenticate
-          </button>
+          <AegisButton
+            label="Authenticate"
+            icon={Shield}
+            loading={loading}
+            disabled={!pin.trim()}
+            size="md"
+            className="w-full py-4 text-[11px] rounded-xl"
+            onClick={handleSubmit}
+          />
         </form>
 
         <p className="text-center text-[8px] font-bold text-slate-700 uppercase tracking-widest">
