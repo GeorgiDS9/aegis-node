@@ -1,3 +1,6 @@
+// Cookie name shared between the waf-config server action and middleware
+export const WAF_COOKIE_NAME = 'aegis-waf'
+
 export interface WafRule {
   id: string
   label: string

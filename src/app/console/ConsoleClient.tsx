@@ -26,6 +26,7 @@ interface Props {
   initialFirewall: FirewallStatus;
   vanguardFeed: VanguardFeedResult;
   initialLogs: VaultSearchResult[];
+  initialWafState: Record<string, boolean>;
 }
 
 export default function ConsoleClient({
@@ -34,6 +35,7 @@ export default function ConsoleClient({
   initialFirewall,
   vanguardFeed,
   initialLogs,
+  initialWafState,
 }: Props) {
   const [authorizedCmds, setAuthorizedCmds]     = useState<Map<string, KineticCommand>>(new Map());
   const [patchModalOpen, setPatchModalOpen]      = useState<boolean>(false);
@@ -212,7 +214,7 @@ export default function ConsoleClient({
             metrics={metrics}
             vanguardAlertCount={filteredVanguard.alerts.length}
           />
-          <AdaptiveShield />
+          <AdaptiveShield initialState={initialWafState} />
         </div>
       </div>
 
