@@ -102,7 +102,7 @@ export async function getDefenseLogs(): Promise<VaultSearchResult[]> {
   try {
     const db = await getDb()
     const table = await db.openTable(TABLE_NAME)
-    
+
     type RawRow = Record<string, unknown>
     const raw = (await table.query().limit(50).toArray()) as RawRow[]
 
@@ -117,8 +117,9 @@ export async function getDefenseLogs(): Promise<VaultSearchResult[]> {
         outcome:   r['outcome']   as string,
         source:    r['source']    as 'EDGE' | 'CLOUD',
         timestamp: r['timestamp'] as string,
-        score:     1, // Full relevance for raw history
+        score:     1,
       }))
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
   } catch (err) {
     console.error('[VAULT] Retrieval failed:', err)
     return []

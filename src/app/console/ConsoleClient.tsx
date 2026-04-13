@@ -18,13 +18,14 @@ import { AegisButton } from "@/components/ui/AegisButton";
 import { CardHeader } from "@/components/ui/CardHeader";
 import { AegisCard } from "@/components/ui/AegisCard";
 
-import type { FirewallStatus, HardwareMetrics, ScanAlert, VanguardFeedResult, KineticCommand } from "@/types/aegis";
+import type { FirewallStatus, HardwareMetrics, ScanAlert, VanguardFeedResult, KineticCommand, VaultSearchResult } from "@/types/aegis";
 
 interface Props {
   initialMetrics: HardwareMetrics;
   initialAlerts: ScanAlert[];
   initialFirewall: FirewallStatus;
   vanguardFeed: VanguardFeedResult;
+  initialLogs: VaultSearchResult[];
 }
 
 export default function ConsoleClient({
@@ -32,6 +33,7 @@ export default function ConsoleClient({
   initialAlerts,
   initialFirewall,
   vanguardFeed,
+  initialLogs,
 }: Props) {
   const [authorizedCmds, setAuthorizedCmds]     = useState<Map<string, KineticCommand>>(new Map());
   const [patchModalOpen, setPatchModalOpen]      = useState<boolean>(false);

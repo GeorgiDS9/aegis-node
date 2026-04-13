@@ -43,6 +43,7 @@ export default async function ConsolePage() {
       initialAlerts={filteredEdgeAlerts}
       initialFirewall={firewall}
       vanguardFeed={filteredVanguard}
+      initialLogs={logs}
     />
   );
 }
