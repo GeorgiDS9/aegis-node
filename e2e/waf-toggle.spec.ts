@@ -1,7 +1,13 @@
 import { test, expect } from '@playwright/test'
+import fs from 'fs'
+import path from 'path'
 import { MOCK_HEARTBEAT } from './fixtures/mock-heartbeat'
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, context }) => {
+  await context.clearCookies()
+  try {
+    fs.writeFileSync(path.resolve(process.cwd(), 'data/.waf-config.json'), '{}')
+  } catch {}
   await page.route('/api/heartbeat', (route) =>
     route.fulfill({
       status:      200,
