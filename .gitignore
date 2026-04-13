@@ -32,6 +32,11 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
+# Playwright
+/playwright-report/
+/test-results/
+e2e/.auth/
+
 # Logs
 /logs
 *.log
