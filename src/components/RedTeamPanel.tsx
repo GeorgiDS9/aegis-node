@@ -62,11 +62,11 @@ function RedTeamPanel() {
         />
       </div>
 
-      <div className="flex-1 mt-2 rounded-lg border border-slate-800 bg-[#0c1222] shadow-[0_0_25px_-12px_rgba(139,92,246,0.2)] flex flex-col overflow-hidden h-[400px]">
-        <div className="flex items-center gap-2.5 px-5 py-4 border-b border-slate-800/40 sticky top-0 bg-[#0c1222] z-10 flex-shrink-0">
-          <div className={`h-2 w-2 rounded-full ${running ? 'bg-violet-400 animate-pulse' : 'bg-slate-700'}`} />
-          <span className="text-[11px] font-black uppercase tracking-[0.25em] text-slate-500">
-            {running ? 'RED_TEAM_LIVE_FEED' : 'RED_TEAM_REPORT_STORAGE'}
+      <div className={`flex-1 mt-2 rounded-lg border ${output ? 'border-violet-500/30 shadow-[0_0_25px_-12px_rgba(139,92,246,0.2)]' : 'border-slate-800/60'} bg-[#0c1222] flex flex-col overflow-hidden h-[400px]`}>
+        <div className={`flex items-center gap-2.5 px-5 py-4 border-b ${output ? 'border-violet-500/10' : 'border-slate-800/40'} sticky top-0 bg-[#0c1222] z-10 flex-shrink-0`}>
+          <div className={`h-2 w-2 rounded-full ${output ? 'bg-violet-400' : 'bg-slate-700'} ${running ? 'animate-pulse' : ''}`} />
+          <span className={`text-[11px] font-black uppercase tracking-[0.25em] ${output ? 'text-violet-400' : 'text-slate-500'}`}>
+            RED_TEAM_REPORT
           </span>
         </div>
         
