@@ -249,13 +249,13 @@ A defense node that only reacts to external signals has a blind spot: its own po
 
 All probes are read-only. The sequence never writes to disk, never modifies firewall rules, never sends traffic outside localhost (the only exception is the Ollama call to `host.docker.internal`, which stays within the Docker host network). The route runs on the `nodejs` runtime because port scanning via `net.connect` requires Node.js APIs that are unavailable in the Edge Runtime isolate.
 
-The ATTACK phase feeds all scout findings to Ollama in a single structured prompt. The AI is constrained to produce a posture assessment — it has no tool access and cannot trigger any action.
+The ASSESS phase feeds all probe findings to Ollama in a single structured prompt. The AI is constrained to produce a posture assessment — it has no tool access and cannot trigger any action.
 
 ### What this flow guarantees
 
 - No system state is modified during or after the probe.
 - Probe findings are displayed to the operator and not automatically acted upon.
-- Ollama offline behavior: the ATTACK phase emits a single advisory message and the AUDIT phase continues normally.
+- Ollama offline behavior: the ASSESS phase emits a single advisory message and the VERIFY phase continues normally.
 - Each probe category uses an injected fetcher/connector interface, making every probe function independently testable offline.
 
 ```mermaid
@@ -273,7 +273,7 @@ sequenceDiagram
 
     Route->>Route: readEnabledWafRules() [disk]
 
-    Note over Route,Probes: Phase 1 — SCOUT
+    Note over Route,Probes: Phase 1 — PROBE
     Route->>Probes: probeWafRules(enabledRules)
     Route->>Probes: probeAuthBoundary(baseUrl)
     Route->>Probes: probePorts([22, 80, 443, 3000, ...])
@@ -281,15 +281,15 @@ sequenceDiagram
     Route->>Probes: probeSecurityHeaders(baseUrl)
     Probes-->>Route: ProbeResult[]
 
-    Route-->>Hook: Stream [SCOUT] lines
+    Route-->>Hook: Stream [PROBE] lines
 
-    Note over Route,Ollama: Phase 2 — ATTACK
+    Note over Route,Ollama: Phase 2 — ASSESS
     Route->>Ollama: POST /api/generate { findings context }
     Ollama-->>Route: Streaming AI posture assessment
     Route-->>Hook: Stream AI chunks
 
-    Note over Route: Phase 3 — AUDIT
-    Route-->>Hook: Stream [AUDIT] summary
+    Note over Route: Phase 3 — VERIFY
+    Route-->>Hook: Stream [VERIFY] summary
     Route-->>Hook: Stream closed
 
     Hook-->>Panel: output updated (React state)
@@ -376,7 +376,7 @@ Update this document whenever any of the following changes:
 - WAF rule set, cookie transport mechanism, or pattern matching scope
 - Vault schema, embedding model, or zero-vector fallback behavior
 - Kinetic command authorization contract or PatchModal deploy flow
-- Red team probe categories, port targets, or ATTACK phase prompt construction
+- Red team probe categories, port targets, or ASSESS phase prompt construction
 - Heartbeat data sources or polling interval
 - Server/client component boundary in `console/page.tsx` → `ConsoleClient.tsx`
 
