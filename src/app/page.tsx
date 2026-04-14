@@ -76,8 +76,8 @@ export default function AegisLanding() {
             Silicon Optimization
           </h3>
           <p className="text-[10px] text-slate-500 uppercase leading-relaxed font-black tracking-wider">
-            Engineered for Apple M-Series Unified Memory. Real-time inference
-            leveraging the Neural Engine.
+            Engineered for Apple M-Series Unified Memory. Local inference via
+            Ollama — all intelligence stays on the host.
           </p>
         </div>
 
@@ -87,8 +87,8 @@ export default function AegisLanding() {
             Kernel Remediation
           </h3>
           <p className="text-[10px] text-slate-500 uppercase leading-relaxed font-black tracking-wider">
-            Direct integration with macOS security layers. Automated enforcement
-            of <span className="text-violet-500/60">pfctl</span> policies.
+            Direct integration with macOS security layers. Operator-authorized{" "}
+            <span className="text-violet-500/60">pfctl</span> commands via Human-in-the-Loop gate.
           </p>
         </div>
 
