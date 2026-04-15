@@ -32,7 +32,7 @@ jobs:
         run: npm ci
 
       - name: npm audit — block on High / Critical
-        run: npm audit --audit-level=high
+        run: npm run audit:high
 
   lint:
     name: Clinical Code Standards
@@ -51,7 +51,7 @@ jobs:
         run: npm ci
 
       - name: ESLint
-        run: npm run audit-lint
+        run: npm run lint
 
   type-check:
     name: TypeScript Strict Check
@@ -70,7 +70,26 @@ jobs:
         run: npm ci
 
       - name: tsc — no-emit
-        run: npx tsc --noEmit
+        run: npm run type-check
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
 
   unit-tests:
     name: Unit Tests
