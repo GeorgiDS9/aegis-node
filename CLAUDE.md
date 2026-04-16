@@ -32,7 +32,7 @@ Aegis is the Active Defense node of the Vanguard Protocol. It provides autonomou
 - **No Merges:** Pushing to remote is encouraged, but merging is restricted to the Architect (User).
 - **Branch Hygiene Gate:** Before creating any new branch, run `git branch` and check for unmerged feature branches (branches not present in `main`). If any exist, stop and alert the Architect. List the unmerged branches and wait for explicit confirmation ("go ahead" or similar) before proceeding. This prevents divergence conflicts where main evolves while an older branch is still open.
 - **Modular Architecture:**
-  - **Extraction:** If a component or file exceeds approximately 200 lines, extract logic into specialized sub-files within the same directory:
+  - **Extraction:** If a component or file exceeds 200-300 lines, extract logic into specialized sub-files within the same directory (with the **exception** of long sequential functions that can go up to 400-500 lines):
     - `[feature].types.ts` (Interfaces/Types)
     - `[feature].hooks.ts` (React hooks/State)
     - `[feature].utils.ts` (Pure helper functions)
@@ -79,17 +79,17 @@ Maintain thin entrypoints. Logic must be extracted once a file exceeds approx. 1
 
 Strict adherence to the "Mission Control" aesthetic is mandatory. Do not use ad-hoc Tailwind classes for typography or status markers if a primitive exists.
 
-- **Component Reuse:** Prioritize `AegisButton`, `StatusBadge`, `SystemLabel`, and `SeverityTag`. 
+- **Component Reuse:** Prioritize `AegisButton`, `StatusBadge`, `SystemLabel`, and `SeverityTag`.
 - **Component Lifecycle:** If a specific UI pattern or style (e.g., a specific glow+border combo) is used more than twice, it MUST be extracted into a reusable component in `src/components/ui/`.
 - **Surgical Font Scale:**
   - **11px (Black/Uppercase):** Primary card headers and terminal titles (e.g., `Remediation_Protocol`).
   - **10px (Black/Uppercase):** Card-level status indicators (e.g., `SIMULATION`, `LIVE`, `STANDBY`). Use `size="md"` for badges.
   - **10px (Mono/Medium):** Metadata labels and system info (Standard `SystemLabel` default).
   - **9px (Black/Uppercase):** Internal item tags and row-level markers (e.g., `CRITICAL`, `HITL: ACTIVE`, `RESTRICTED`). Use `size="sm"` for badges.
-- **Color Discipline:** 
+- **Color Discipline:**
   - **Violet-600/500:** Active protocol engagement / AI streams.
   - **Slate-800/900:** Passive/Standby containers and neutral feeds.
-  - **Emerald/Amber/Red:** Functional status only (Success/Sync/Alert). 
+  - **Emerald/Amber/Red:** Functional status only (Success/Sync/Alert).
 
 ## 5. Operational Commands
 
