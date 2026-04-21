@@ -12,10 +12,10 @@
  * Full hash stored separately when vault dedup precision is needed.
  */
 
-import { createHash } from 'crypto'
-import path from 'path'
+import { createHash } from "crypto";
+import path from "path";
 
-export type AlertPrefix = 'new' | 'drift' | 'del'
+export type AlertPrefix = "new" | "drift" | "del";
 
 /**
  * Generates a stable, content-derived ID for a Vanguard cloud alert.
@@ -28,12 +28,15 @@ export type AlertPrefix = 'new' | 'drift' | 'del'
  * Format: "vg-<12-char hex>"
  */
 export function stableVanguardId(item: Record<string, unknown>): string {
-  const ip       = String(item['source_ip'] ?? '')
-  const category = String(item['label'] ?? item['type'] ?? '')
-  const message  = String(item['detail'] ?? item['message'] ?? item['description'] ?? '').slice(0, 120)
-  const content  = `${ip}|${category}|${message}`
-  const hash     = createHash('sha256').update(content).digest('hex').slice(0, 12)
-  return `vg-${hash}`
+  const ip = String(item["source_ip"] ?? "");
+  const category = String(item["label"] ?? item["type"] ?? "");
+  const message = String(item["detail"] ?? item["message"] ?? item["description"] ?? "").slice(
+    0,
+    120,
+  );
+  const content = `${ip}|${category}|${message}`;
+  const hash = createHash("sha256").update(content).digest("hex").slice(0, 12);
+  return `vg-${hash}`;
 }
 
 /**
@@ -41,8 +44,8 @@ export function stableVanguardId(item: Record<string, unknown>): string {
  * Used in UI labels and vault cve_id fields.
  */
 export function stableShortHash(filePath: string): string {
-  const normalized = path.resolve(filePath)
-  return createHash('sha256').update(normalized).digest('hex').slice(0, 12)
+  const normalized = path.resolve(filePath);
+  return createHash("sha256").update(normalized).digest("hex").slice(0, 12);
 }
 
 /**
@@ -50,8 +53,8 @@ export function stableShortHash(filePath: string): string {
  * Used when full collision resistance is required (e.g. vault dedup queries).
  */
 export function stableFullHash(filePath: string): string {
-  const normalized = path.resolve(filePath)
-  return createHash('sha256').update(normalized).digest('hex')
+  const normalized = path.resolve(filePath);
+  return createHash("sha256").update(normalized).digest("hex");
 }
 
 /**
@@ -59,5 +62,5 @@ export function stableFullHash(filePath: string): string {
  *   e.g. "drift-a3f9c2b1d4e8"
  */
 export function buildAlertId(prefix: AlertPrefix, filePath: string): string {
-  return `${prefix}-${stableShortHash(filePath)}`
+  return `${prefix}-${stableShortHash(filePath)}`;
 }

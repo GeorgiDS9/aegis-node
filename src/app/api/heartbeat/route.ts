@@ -50,7 +50,7 @@ export async function GET() {
     const mitigatedIds = new Set(
       logs
         .filter((log) => now - new Date(log.timestamp).getTime() < TWENTY_FOUR_HOURS)
-        .map((log) => log.cve_id)
+        .map((log) => log.cve_id),
     );
 
     const filteredEdgeAlerts = alerts.filter((a) => !mitigatedIds.has(a.id));

@@ -36,9 +36,7 @@ export default function AegisLanding() {
       <div className="mx-auto max-w-4xl mb-20 text-center space-y-3">
         <p className="text-xs md:text-sm font-black tracking-[0.35em] text-slate-400 uppercase leading-relaxed">
           Autonomous hardware remediation for the{" "}
-          <span className="text-violet-500 whitespace-nowrap">
-            Vanguard Protocol 🛰️
-          </span>
+          <span className="text-violet-500 whitespace-nowrap">Vanguard Protocol 🛰️</span>
         </p>
         <p className="text-[10px] md:text-xs font-bold tracking-[0.2em] text-slate-500 uppercase">
           Translating global intelligence into local kernel hardening
@@ -76,8 +74,8 @@ export default function AegisLanding() {
             Silicon Optimization
           </h3>
           <p className="text-[10px] text-slate-500 uppercase leading-relaxed font-black tracking-wider">
-            Engineered for Apple M-Series Unified Memory. Local inference via
-            Ollama — all intelligence stays on the host.
+            Engineered for Apple M-Series Unified Memory. Local inference via Ollama — all
+            intelligence stays on the host.
           </p>
         </div>
 
@@ -98,8 +96,8 @@ export default function AegisLanding() {
             Protocol Sync
           </h3>
           <p className="text-[10px] text-slate-500 uppercase leading-relaxed font-black tracking-wider">
-            Continuous telemetry bridge with the Vanguard Grid. Localized action
-            from global cloud signals.
+            Continuous telemetry bridge with the Vanguard Grid. Localized action from global cloud
+            signals.
           </p>
         </div>
       </div>

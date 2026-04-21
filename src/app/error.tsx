@@ -1,21 +1,21 @@
-'use client'
+"use client";
 
-import { useEffect } from 'react'
-import { ShieldAlert, RefreshCw, Terminal, Home } from 'lucide-react'
-import Link from 'next/link'
-import { AegisButton } from '@/components/ui/AegisButton'
+import { useEffect } from "react";
+import { ShieldAlert, RefreshCw, Terminal, Home } from "lucide-react";
+import Link from "next/link";
+import { AegisButton } from "@/components/ui/AegisButton";
 
 export default function RootErrorBoundary({
   error,
   reset,
 }: {
-  error: Error & { digest?: string }
-  reset: () => void
+  error: Error & { digest?: string };
+  reset: () => void;
 }) {
   useEffect(() => {
     // Log catastrophic failure to local console for debugging
-    console.error('[AEGIS KERNEL PANIC]:', error)
-  }, [error])
+    console.error("[AEGIS KERNEL PANIC]:", error);
+  }, [error]);
 
   return (
     <main className="min-h-screen bg-[#020617] text-slate-100 flex items-center justify-center p-6 font-sans relative overflow-hidden">
@@ -25,7 +25,6 @@ export default function RootErrorBoundary({
 
       <div className="max-w-xl w-full relative z-10">
         <div className="flex flex-col items-center text-center space-y-10">
-          
           {/* ⬢ FAILURE ICON */}
           <div className="relative">
             <div className="absolute inset-0 bg-red-500/10 blur-3xl rounded-full scale-150" />
@@ -39,13 +38,14 @@ export default function RootErrorBoundary({
             <h1 className="text-[13px] font-black uppercase tracking-[0.3em] text-white">
               Localized Remediation Grid Failure
             </h1>
-            
+
             <div className="py-5 px-6 rounded-xl border border-red-900/40 bg-red-950/10 backdrop-blur-sm max-w-md mx-auto">
               <div className="flex items-start gap-4 text-left">
                 <Terminal className="h-4 w-4 text-red-400 mt-1 shrink-0" />
                 <div className="space-y-2">
                   <p className="text-[11px] font-mono text-red-200/90 leading-relaxed break-all">
-                    {error.message || 'An unhandled exception has desynchronized the remediation grid.'}
+                    {error.message ||
+                      "An unhandled exception has desynchronized the remediation grid."}
                   </p>
                   {error.digest && (
                     <p className="text-[9px] font-mono text-red-500/60 uppercase tracking-widest">
@@ -66,7 +66,7 @@ export default function RootErrorBoundary({
               size="md"
               className="py-4 px-10 rounded-xl"
             />
-            
+
             <Link href="/" className="inline-block">
               <AegisButton
                 label="Return to Hub"
@@ -80,5 +80,5 @@ export default function RootErrorBoundary({
         </div>
       </div>
     </main>
-  )
+  );
 }

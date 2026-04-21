@@ -1,25 +1,29 @@
 "use client";
 
 import { useState, useCallback, useRef, useEffect } from "react";
-import type { DefenseLogEntry, VaultSearchResult, FirewallStatus as FirewallStatusType, HardwareMetrics, ScanAlert, VanguardFeedResult } from "@/types/aegis";
+import type {
+  DefenseLogEntry,
+  VaultSearchResult,
+  FirewallStatus as FirewallStatusType,
+  HardwareMetrics,
+  ScanAlert,
+  VanguardFeedResult,
+} from "@/types/aegis";
 import { searchRemediations } from "@/actions/vault";
 
 export function useDefenseLog(initial: DefenseLogEntry[] = []) {
   const [entries, setEntries] = useState<DefenseLogEntry[]>(initial);
 
-  const addEntry = useCallback(
-    (entry: Omit<DefenseLogEntry, "id" | "timestamp">) => {
-      setEntries((prev) => [
-        {
-          ...entry,
-          id: crypto.randomUUID(),
-          timestamp: new Date().toLocaleTimeString("en-US", { hour12: false }),
-        },
-        ...prev,
-      ]);
-    },
-    [],
-  );
+  const addEntry = useCallback((entry: Omit<DefenseLogEntry, "id" | "timestamp">) => {
+    setEntries((prev) => [
+      {
+        ...entry,
+        id: crypto.randomUUID(),
+        timestamp: new Date().toLocaleTimeString("en-US", { hour12: false }),
+      },
+      ...prev,
+    ]);
+  }, []);
 
   return { entries, addEntry };
 }
@@ -40,15 +44,10 @@ export function useStreamingAI() {
   const abortRefs = useRef<Map<string, AbortController>>(new Map());
 
   const streamQuery = useCallback(
-    async (
-      id: string,
-      prompt: string,
-      onChunk: (chunk: string) => void,
-      onDone: () => void,
-    ) => {
+    async (id: string, prompt: string, onChunk: (chunk: string) => void, onDone: () => void) => {
       const controller = new AbortController();
       abortRefs.current.set(id, controller);
-      
+
       AI_MEMORY.streamingIds.add(id);
       AI_MEMORY.expanded.add(id); // Auto-expand on stream start
       forceUpdate({});
@@ -96,8 +95,8 @@ export function useStreamingAI() {
     [],
   );
 
-  return { 
-    streamingIds: AI_MEMORY.streamingIds, 
+  return {
+    streamingIds: AI_MEMORY.streamingIds,
     plans: AI_MEMORY.plans,
     expanded: AI_MEMORY.expanded,
     streamQuery,
@@ -105,14 +104,14 @@ export function useStreamingAI() {
       if (AI_MEMORY.expanded.has(id)) AI_MEMORY.expanded.delete(id);
       else AI_MEMORY.expanded.add(id);
       forceUpdate({});
-    }
+    },
   };
 }
 interface PulseData {
-  alerts: ScanAlert[]
-  metrics: HardwareMetrics
-  firewall: FirewallStatusType
-  vanguard: VanguardFeedResult
+  alerts: ScanAlert[];
+  metrics: HardwareMetrics;
+  firewall: FirewallStatusType;
+  vanguard: VanguardFeedResult;
 }
 
 export function useAegisPulse(initial?: PulseData) {
@@ -139,90 +138,99 @@ export function useAegisPulse(initial?: PulseData) {
 }
 
 // ── Red Team probe hook ───────────────────────────────────────────
-export type RedTeamStatus = 'STANDBY' | 'PROBING' | 'ASSESSING' | 'VERIFYING' | 'VERIFIED' | 'DRIFT_DETECTED' | 'ABORTED'
+export type RedTeamStatus =
+  | "STANDBY"
+  | "PROBING"
+  | "ASSESSING"
+  | "VERIFYING"
+  | "VERIFIED"
+  | "DRIFT_DETECTED"
+  | "ABORTED";
 
 export function useRedTeam() {
-  const [output, setOutput]   = useState<string>('')
-  const [running, setRunning] = useState<boolean>(false)
-  const [status, setStatus]   = useState<RedTeamStatus>('STANDBY')
-  const abortRef = useRef<AbortController | null>(null)
+  const [output, setOutput] = useState<string>("");
+  const [running, setRunning] = useState<boolean>(false);
+  const [status, setStatus] = useState<RedTeamStatus>("STANDBY");
+  const abortRef = useRef<AbortController | null>(null);
 
   const commerce = useCallback(async () => {
-    if (running) return
-    
+    if (running) return;
+
     // Force kill any existing/stale operations
     if (abortRef.current) {
-      abortRef.current.abort()
+      abortRef.current.abort();
     }
-    
-    setOutput('')
-    setRunning(true)
-    setStatus('PROBING')
-    abortRef.current = new AbortController()
+
+    setOutput("");
+    setRunning(true);
+    setStatus("PROBING");
+    abortRef.current = new AbortController();
 
     try {
-      const res = await fetch('/api/red-team/run', {
+      const res = await fetch("/api/red-team/run", {
         signal: abortRef.current.signal,
-      })
+      });
 
       if (!res.ok || !res.body) {
-        setOutput('Red Team Engine offline — route unreachable.')
-        setStatus('STANDBY')
-        setRunning(false)
-        return
+        setOutput("Red Team Engine offline — route unreachable.");
+        setStatus("STANDBY");
+        setRunning(false);
+        return;
       }
 
-      const reader  = res.body.getReader()
-      const decoder = new TextDecoder()
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
 
       while (true) {
-        const { done, value } = await reader.read()
-        if (done) break
-        const chunk = decoder.decode(value, { stream: true })
-        
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+
         setOutput((prev) => {
-          const next = prev + chunk
-          
+          const next = prev + chunk;
+
           // Phase detection
-          if (next.includes('[VERIFY]')) setStatus('VERIFYING')
-          else if (next.includes('[ASSESS]')) setStatus('ASSESSING')
-          else if (next.includes('[PROBE]')) setStatus('PROBING')
+          if (next.includes("[VERIFY]")) setStatus("VERIFYING");
+          else if (next.includes("[ASSESS]")) setStatus("ASSESSING");
+          else if (next.includes("[PROBE]")) setStatus("PROBING");
 
           // Outcome detection
-          if (next.toLowerCase().includes('drift detected') || next.toLowerCase().includes('mismatch')) {
-            setStatus('DRIFT_DETECTED')
+          if (
+            next.toLowerCase().includes("drift detected") ||
+            next.toLowerCase().includes("mismatch")
+          ) {
+            setStatus("DRIFT_DETECTED");
           }
-          
-          return next
-        })
-      }
-      
-      // Finalize status - Force 'VERIFIED' only if drift wasn't triggered
-      setStatus(prev => prev === 'DRIFT_DETECTED' ? 'DRIFT_DETECTED' : 'VERIFIED')
 
+          return next;
+        });
+      }
+
+      // Finalize status - Force 'VERIFIED' only if drift wasn't triggered
+      setStatus((prev) => (prev === "DRIFT_DETECTED" ? "DRIFT_DETECTED" : "VERIFIED"));
     } catch (err: unknown) {
-      if (err instanceof Error && err.name !== 'AbortError') {
-        setOutput((prev) => prev + '\n[ERROR: Probe sequence disrupted]')
-        setStatus('STANDBY')
+      if (err instanceof Error && err.name !== "AbortError") {
+        setOutput((prev) => prev + "\n[ERROR: Probe sequence disrupted]");
+        setStatus("STANDBY");
       }
     } finally {
-      setRunning(false)
+      setRunning(false);
     }
-  }, [running])
+  }, [running]);
 
   const abort = useCallback(() => {
-    abortRef.current?.abort()
-    setRunning(false)
-    setStatus('ABORTED')
-  }, [])
+    abortRef.current?.abort();
+    setRunning(false);
+    setStatus("ABORTED");
+  }, []);
 
-  return { output, running, status, commence: commerce, abort }
+  return { output, running, status, commence: commerce, abort };
 }
 
 export function useVaultSearch() {
   const [results, setResults] = useState<VaultSearchResult[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [query, setQuery]     = useState<string>("");
+  const [query, setQuery] = useState<string>("");
 
   const search = useCallback(async (q: string) => {
     if (!q.trim()) return;

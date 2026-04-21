@@ -7,11 +7,11 @@ import { AegisButton } from "@/components/ui/AegisButton";
 import SystemLabel from "@/components/ui/SystemLabel";
 
 export default function LoginPage() {
-  const [pin, setPin]         = useState<string>("");
-  const [error, setError]     = useState<string>("");
+  const [pin, setPin] = useState<string>("");
+  const [error, setError] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const router   = useRouter();
+  const router = useRouter();
 
   const handleSubmit = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -21,9 +21,9 @@ export default function LoginPage() {
 
     try {
       const res = await fetch("/api/auth/login", {
-        method:  "POST",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ pin }),
+        body: JSON.stringify({ pin }),
       });
 
       if (res.ok) {
@@ -43,7 +43,6 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen bg-[#020617] flex items-center justify-center p-4">
       <div className="w-full max-w-sm space-y-8">
-
         <div className="flex flex-col items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-violet-500/30 bg-violet-950/20 shadow-[0_0_30px_-5px_rgba(139,92,246,0.4)]">
             <Shield className="h-8 w-8 text-violet-400" />
@@ -53,9 +52,7 @@ export default function LoginPage() {
               Aegis Node
             </h1>
             <div className="mt-1">
-              <SystemLabel>
-                Operator Authentication Required
-              </SystemLabel>
+              <SystemLabel>Operator Authentication Required</SystemLabel>
             </div>
           </div>
         </div>

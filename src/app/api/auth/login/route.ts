@@ -20,8 +20,8 @@ export async function POST(req: NextRequest) {
     res.cookies.set(COOKIE_NAME, token, {
       httpOnly: true,
       sameSite: "strict",
-      path:     "/",
-      maxAge:   8 * 60 * 60, // 8 hours
+      path: "/",
+      maxAge: 8 * 60 * 60, // 8 hours
       // secure: true — omit for localhost dev; add when behind HTTPS
     });
     return res;

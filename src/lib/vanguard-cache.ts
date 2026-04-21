@@ -9,64 +9,64 @@
  * a pure utility — not a Next.js Server Action.
  */
 
-import type { VanguardFeedResult } from '@/types/aegis'
+import type { VanguardFeedResult } from "@/types/aegis";
 
-const TIMEOUT_MS   = 1000   // Give Vanguard 1 second max per heartbeat poll
-const STALE_TTL_MS = 30_000 // Cache is considered stale after 30 seconds
+const TIMEOUT_MS = 1000; // Give Vanguard 1 second max per heartbeat poll
+const STALE_TTL_MS = 30_000; // Cache is considered stale after 30 seconds
 
 interface CacheEntry {
-  result: VanguardFeedResult
-  fetchedAt: number
+  result: VanguardFeedResult;
+  fetchedAt: number;
 }
 
-let _cache: CacheEntry | null = null
+let _cache: CacheEntry | null = null;
 
 export async function fetchWithCircuitBreaker(
-  fetcher: () => Promise<VanguardFeedResult>
+  fetcher: () => Promise<VanguardFeedResult>,
 ): Promise<VanguardFeedResult> {
-  const now = Date.now()
+  const now = Date.now();
 
   // Race the fetcher against the timeout
   const timeoutResult: VanguardFeedResult = {
     connected: false,
-    alerts:    _cache?.result.alerts ?? [],
-    error:     'Vanguard timeout — serving cached feed',
+    alerts: _cache?.result.alerts ?? [],
+    error: "Vanguard timeout — serving cached feed",
     fetchedAt: new Date().toISOString(),
-  }
+  };
 
   try {
     const result = await Promise.race([
       fetcher(),
       new Promise<VanguardFeedResult>((resolve) =>
-        setTimeout(() => resolve(timeoutResult), TIMEOUT_MS)
+        setTimeout(() => resolve(timeoutResult), TIMEOUT_MS),
       ),
-    ])
+    ]);
 
     if (result.connected) {
-      _cache = { result, fetchedAt: now }
+      _cache = { result, fetchedAt: now };
     } else if (_cache && now - _cache.fetchedAt < STALE_TTL_MS) {
       // Return cached alerts even if not connected, so the UI keeps showing data
       return {
         ...result,
         alerts: _cache.result.alerts,
-      }
+      };
     }
 
-    return result
+    return result;
   } catch {
     if (_cache) {
       return {
         connected: false,
-        alerts:    _cache.result.alerts,
-        error:     'Vanguard unreachable — serving cached feed',
+        alerts: _cache.result.alerts,
+        error: "Vanguard unreachable — serving cached feed",
         fetchedAt: new Date().toISOString(),
-      }
+      };
     }
     return {
       connected: false,
-      alerts:    [],
-      error:     'Vanguard unreachable',
+      alerts: [],
+      error: "Vanguard unreachable",
       fetchedAt: new Date().toISOString(),
-    }
+    };
   }
 }

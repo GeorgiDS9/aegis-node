@@ -1,5 +1,5 @@
-import { Home, SearchX, Terminal } from 'lucide-react'
-import Link from 'next/link'
+import { Home, SearchX, Terminal } from "lucide-react";
+import Link from "next/link";
 
 export default function NotFound() {
   return (
@@ -10,7 +10,6 @@ export default function NotFound() {
 
       <div className="max-w-xl w-full relative z-10">
         <div className="flex flex-col items-center text-center space-y-8">
-          
           {/* ⬢ NOT FOUND ICON */}
           <div className="relative">
             <div className="absolute inset-0 bg-violet-500/20 blur-2xl rounded-full scale-150" />
@@ -24,12 +23,13 @@ export default function NotFound() {
             <h1 className="text-[13px] font-black uppercase tracking-[0.3em] text-white">
               System_Status: Route_Not_Found
             </h1>
-            
+
             <div className="py-4 px-6 rounded-xl border border-slate-800/60 bg-slate-900/10 backdrop-blur-sm max-w-sm mx-auto">
               <div className="flex items-start gap-3 text-left">
                 <Terminal className="h-4 w-4 text-violet-400 mt-1 shrink-0" />
                 <p className="text-[11px] font-mono text-slate-400 leading-relaxed">
-                  The requested coordinate does not exist within the Aegis perimeter. No active handler found.
+                  The requested coordinate does not exist within the Aegis perimeter. No active
+                  handler found.
                 </p>
               </div>
             </div>
@@ -52,5 +52,5 @@ export default function NotFound() {
         </div>
       </div>
     </main>
-  )
+  );
 }

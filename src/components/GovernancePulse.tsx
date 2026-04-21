@@ -1,33 +1,33 @@
-'use client'
+"use client";
 
-import { memo } from 'react'
-import { Scale, ShieldCheck, Activity, FileCheck, Info } from 'lucide-react'
-import { AegisCard } from './ui/AegisCard'
-import { CardHeader } from './ui/CardHeader'
-import { StatusBadge } from './ui/StatusBadge'
-import SystemLabel from './ui/SystemLabel'
+import { memo } from "react";
+import { Scale, ShieldCheck, Activity, FileCheck, Info } from "lucide-react";
+import { AegisCard } from "./ui/AegisCard";
+import { CardHeader } from "./ui/CardHeader";
+import { StatusBadge } from "./ui/StatusBadge";
+import SystemLabel from "./ui/SystemLabel";
 
 interface GovernancePulseProps {
-  wafActiveCount: number
-  wafTotalCount: number
-  mttrSeconds?: number
-  vaultStatus: 'IMMUTABLE' | 'SYNCING' | 'DEGRADED' | 'READ_ONLY'
-  hitlStatus: 'ACTIVE' | 'BYPASS' | 'PAUSED'
-  nodeId: string
+  wafActiveCount: number;
+  wafTotalCount: number;
+  mttrSeconds?: number;
+  vaultStatus: "IMMUTABLE" | "SYNCING" | "DEGRADED" | "READ_ONLY";
+  hitlStatus: "ACTIVE" | "BYPASS" | "PAUSED";
+  nodeId: string;
 }
 
-const VAULT_MAP: Record<string, 'blue' | 'amber' | 'red' | 'default'> = {
-  IMMUTABLE: 'blue',
-  SYNCING:   'amber',
-  DEGRADED:  'red',
-  READ_ONLY: 'default',
-}
+const VAULT_MAP: Record<string, "blue" | "amber" | "red" | "default"> = {
+  IMMUTABLE: "blue",
+  SYNCING: "amber",
+  DEGRADED: "red",
+  READ_ONLY: "default",
+};
 
-const HITL_MAP: Record<string, 'emerald' | 'red' | 'amber'> = {
-  ACTIVE: 'emerald',
-  BYPASS: 'red',
-  PAUSED: 'amber',
-}
+const HITL_MAP: Record<string, "emerald" | "red" | "amber"> = {
+  ACTIVE: "emerald",
+  BYPASS: "red",
+  PAUSED: "amber",
+};
 
 function GovernancePulse({
   wafActiveCount,
@@ -35,18 +35,16 @@ function GovernancePulse({
   mttrSeconds = 14.2,
   vaultStatus,
   hitlStatus,
-  nodeId
+  nodeId,
 }: GovernancePulseProps) {
-  const protectPercent = (wafActiveCount / wafTotalCount) * 100
+  const protectPercent = (wafActiveCount / wafTotalCount) * 100;
 
   return (
     <AegisCard className="flex flex-col h-full">
-      <CardHeader 
-        title="GOVERNANCE: NIST_CSF_V2" 
+      <CardHeader
+        title="GOVERNANCE: NIST_CSF_V2"
         icon={Scale}
-        rightElement={
-          <StatusBadge label="V2.0_2024" type="default" size="md" />
-        }
+        rightElement={<StatusBadge label="V2.0_2024" type="default" size="md" />}
       />
 
       <div className="space-y-6 mt-2 pb-2">
@@ -57,9 +55,7 @@ function GovernancePulse({
               <Info className="h-3 w-3 text-slate-600" />
               IDENTIFY (ID)
             </div>
-            <SystemLabel className="text-slate-200 font-bold">
-              {nodeId}
-            </SystemLabel>
+            <SystemLabel className="text-slate-200 font-bold">{nodeId}</SystemLabel>
           </div>
           <div className="h-[1px] w-full bg-slate-800/50" />
         </div>
@@ -76,7 +72,7 @@ function GovernancePulse({
             </SystemLabel>
           </div>
           <div className="relative h-[1px] w-full bg-slate-800/50 overflow-hidden">
-            <div 
+            <div
               className="absolute top-0 left-0 h-full bg-slate-500 transition-all duration-1000 ease-out"
               style={{ width: `${protectPercent}%` }}
             />
@@ -91,9 +87,7 @@ function GovernancePulse({
               RESPOND (RS)
             </div>
             <div className="flex items-center gap-3">
-               <SystemLabel className="text-slate-200 font-bold">
-                MTTR: {mttrSeconds}s
-              </SystemLabel>
+              <SystemLabel className="text-slate-200 font-bold">MTTR: {mttrSeconds}s</SystemLabel>
               <StatusBadge label={`HITL: ${hitlStatus}`} type={HITL_MAP[hitlStatus]} size="sm" />
             </div>
           </div>
@@ -108,13 +102,13 @@ function GovernancePulse({
               RECOVER (RC)
             </div>
             <div className="flex items-center gap-2">
-               <StatusBadge label={`SYNC: ${vaultStatus}`} type={VAULT_MAP[vaultStatus]} size="sm" />
+              <StatusBadge label={`SYNC: ${vaultStatus}`} type={VAULT_MAP[vaultStatus]} size="sm" />
             </div>
           </div>
         </div>
       </div>
     </AegisCard>
-  )
+  );
 }
 
-export default memo(GovernancePulse)
+export default memo(GovernancePulse);

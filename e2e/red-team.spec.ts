@@ -44,9 +44,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 // ── Button state ──────────────────────────────────────────────────
-test("Commence Probe button is enabled and visible before probe starts", async ({
-  page,
-}) => {
+test("Commence Probe button is enabled and visible before probe starts", async ({ page }) => {
   await page.goto("/console");
   const btn = page.getByRole("button", { name: /commence probe/i });
   await expect(btn).toBeVisible();
@@ -54,9 +52,7 @@ test("Commence Probe button is enabled and visible before probe starts", async (
 });
 
 // ── Probe flow ────────────────────────────────────────────────────
-test("clicking Commence Probe streams output to the terminal", async ({
-  page,
-}) => {
+test("clicking Commence Probe streams output to the terminal", async ({ page }) => {
   await page.route("/api/red-team/run", (route) =>
     route.fulfill({
       status: 200,
@@ -68,9 +64,7 @@ test("clicking Commence Probe streams output to the terminal", async ({
   await page.goto("/console");
   await page.getByRole("button", { name: /commence probe/i }).click();
 
-  await expect(
-    page.getByText("[PROBE] Initiating red team probe sequence..."),
-  ).toBeVisible({
+  await expect(page.getByText("[PROBE] Initiating red team probe sequence...")).toBeVisible({
     timeout: 10_000,
   });
 });
@@ -87,9 +81,7 @@ test("[ASSESS] phase output appears in terminal", async ({ page }) => {
   await page.goto("/console");
   await page.getByRole("button", { name: /commence probe/i }).click();
 
-  await expect(
-    page.getByText("[ASSESS] Forwarding findings to AI analyst..."),
-  ).toBeVisible({
+  await expect(page.getByText("[ASSESS] Forwarding findings to AI analyst...")).toBeVisible({
     timeout: 10_000,
   });
 });
@@ -106,11 +98,9 @@ test("[VERIFY] summary appears after probe completes", async ({ page }) => {
   await page.goto("/console");
   await page.getByRole("button", { name: /commence probe/i }).click();
 
-  await expect(page.getByText("[VERIFY] Probe sequence complete.")).toBeVisible(
-    {
-      timeout: 10_000,
-    },
-  );
+  await expect(page.getByText("[VERIFY] Probe sequence complete.")).toBeVisible({
+    timeout: 10_000,
+  });
 });
 
 test("RED_TEAM_REPORT terminal header activates with violet styling after probe", async ({
@@ -134,12 +124,8 @@ test("RED_TEAM_REPORT terminal header activates with violet styling after probe"
 });
 
 // ── Offline resilience ────────────────────────────────────────────
-test("probe shows error message when route is unreachable", async ({
-  page,
-}) => {
-  await page.route("/api/red-team/run", (route) =>
-    route.fulfill({ status: 500, body: "" }),
-  );
+test("probe shows error message when route is unreachable", async ({ page }) => {
+  await page.route("/api/red-team/run", (route) => route.fulfill({ status: 500, body: "" }));
 
   await page.goto("/console");
   await page.getByRole("button", { name: /commence probe/i }).click();

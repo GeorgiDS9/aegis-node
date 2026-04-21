@@ -1,10 +1,10 @@
-'use server'
+"use server";
 
-import { exec } from 'child_process'
-import { promisify } from 'util'
-import type { FirewallStatus } from '@/types/aegis'
+import { exec } from "child_process";
+import { promisify } from "util";
+import type { FirewallStatus } from "@/types/aegis";
 
-const execAsync = promisify(exec)
+const execAsync = promisify(exec);
 
 /**
  * Read-only firewall audit via pfctl -s info.
@@ -13,27 +13,22 @@ const execAsync = promisify(exec)
  */
 export async function getFirewallStatus(): Promise<FirewallStatus> {
   try {
-    const { stdout, stderr } = await execAsync('pfctl -s info', { timeout: 3000 })
-    const output = (stdout || stderr).trim()
-    const enabled = /Status:\s*Enabled/i.test(output)
+    const { stdout, stderr } = await execAsync("pfctl -s info", { timeout: 3000 });
+    const output = (stdout || stderr).trim();
+    const enabled = /Status:\s*Enabled/i.test(output);
 
-    const interfaces = Array.from(
-      output.matchAll(/Interface:\s*(\S+)/gi),
-      (m) => m[1]
-    )
+    const interfaces = Array.from(output.matchAll(/Interface:\s*(\S+)/gi), (m) => m[1]);
 
-    return { enabled, interfaces, rawOutput: output }
+    return { enabled, interfaces, rawOutput: output };
   } catch (err: unknown) {
-    const msg = err instanceof Error ? err.message : String(err)
-    const isPermission = /Permission denied|Operation not permitted/i.test(msg)
+    const msg = err instanceof Error ? err.message : String(err);
+    const isPermission = /Permission denied|Operation not permitted/i.test(msg);
 
     return {
       enabled: false,
       interfaces: [],
-      rawOutput: '',
-      error: isPermission
-        ? 'Auditor mode — elevated access required to read PF state'
-        : msg,
-    }
+      rawOutput: "",
+      error: isPermission ? "Auditor mode — elevated access required to read PF state" : msg,
+    };
   }
 }

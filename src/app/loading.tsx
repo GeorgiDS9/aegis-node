@@ -1,24 +1,23 @@
-import React from 'react'
-import { Shield, Loader2, Zap } from 'lucide-react'
+import React from "react";
+import { Shield, Loader2, Zap } from "lucide-react";
 
 export default function Loading() {
   return (
     <main className="min-h-screen bg-[#020617] text-white flex flex-col items-center justify-center p-6 relative overflow-hidden">
       {/* ── BACKGROUND AMBIANCE ───────────────────────────────────── */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-violet-600/5 blur-[160px] rounded-full -z-10 animate-pulse" />
-      
+
       <div className="flex flex-col items-center space-y-10 max-w-sm w-full">
-        
         {/* ⬢ CENTRAL LOGO LOADER */}
         <div className="relative">
           {/* Outer Rotating Ring */}
           <div className="absolute -inset-4 border border-violet-500/10 rounded-full animate-[spin_4s_linear_infinite]" />
           <div className="absolute -inset-8 border border-slate-800/40 rounded-full animate-[spin_8s_linear_infinite_reverse]" />
-          
+
           {/* Main Shield */}
           <div className="relative h-20 w-20 flex items-center justify-center rounded-2xl border border-violet-500/30 bg-violet-950/20 shadow-[0_0_40px_-10px_rgba(139,92,246,0.3)]">
             <Shield className="h-10 w-10 text-violet-400 animate-pulse" />
-            
+
             {/* Small floating zap */}
             <Zap className="absolute -top-1 -right-1 h-4 w-4 text-violet-500 animate-bounce" />
           </div>
@@ -61,5 +60,5 @@ export default function Loading() {
         </div>
       </div>
     </main>
-  )
+  );
 }
