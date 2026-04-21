@@ -21,16 +21,21 @@ Aegis is the Active Defense node of the Vanguard Protocol. It provides autonomou
 
 ## 3. Development Workflow (The Sprint Protocol)
 
-- **Feature Branches:** e.g.: `feat/`, `fix/`, `refactor/`
-- **Atomic Commits:** group changed files meaningfully and create several commits per feature. Separate concerns:
-  1. UI/Layout
-  2. API/Routes
-  3. Logic/Service
-  4. Integration/Testing
-- **Commit Metadata:** never include "Co-authored-by: Claude", "Co-Authored-By:", or any AI attribution tags in commit messages.
+- **Repo Layout:** `spectra/` is the root container. `apps/spectra-app/` and `apps/spectra-api/` are independently deployable sub-projects, each with their own `package.json`.
+- **Feature Branches:** `feat/`, `fix/`, `refactor/` — **always required** for any UI change, refactor, or code change. Only documentation updates (`.md` files) may be committed directly to `main`.
+- **Atomic Commits:** Group changed files meaningfully. Separate concerns across multiple commits (not just 1-2) where applicable:
+  1. Infrastructure / IaC
+  2. API Routes / Lambda handlers
+  3. Agent logic / LangGraph graph
+  4. UI / Components
+  5. Config / Env / CI
+- **Commit Metadata:** Never include "Co-authored-by: Claude", "Co-Authored-By:", or any AI attribution tags in commit messages.
   - **How to apply:** Write all commit messages without any trailing attribution lines. This applies to every commit, on every branch, always.
+- **Lock file rule:** Always stage `package-lock.json` alongside `package.json`. Every `npm install` updates both — committing one without the other leaves a dirty working tree.
+- **Prettier config:** Every new repo or sub-app must include a `.prettierrc` at its root on day one. Config: `singleQuote: false` (double quotes), `semi: true`, `tabWidth: 2`, `trailingComma: "all"`, `printWidth: 100`. Run `prettier --write "**/*.{ts,tsx}"` after adding the config to normalize existing files.
 - **No Merges:** Pushing to remote is encouraged, but merging is restricted to the Architect (User).
-- **Branch Hygiene Gate:** Before creating any new branch, run `git branch` and check for unmerged feature branches (branches not present in `main`). If any exist, stop and alert the Architect. List the unmerged branches and wait for explicit confirmation ("go ahead" or similar) before proceeding. This prevents divergence conflicts where main evolves while an older branch is still open.
+- **Branch Hygiene Gate:** Before creating any new branch, run `git branch --merged` and delete any merged local branches. If genuinely unmerged branches exist, stop and alert the Architect — never create a new branch or merge until older branches are resolved and the Architect confirms CI is green.
+- **Platform steps:** After each Phase, alert the Architect with a list of AWS Console / external platform steps required to support the changes (e.g., enabling Bedrock model access, creating Supabase project, adding Inngest app, setting Upstash env vars).
 - **Modular Architecture:**
   - **Extraction:** If a component or file exceeds 200-300 lines, extract logic into specialized sub-files within the same directory (with the **exception** of long sequential functions that can go up to 400-500 lines):
     - `[feature].types.ts` (Interfaces/Types)
