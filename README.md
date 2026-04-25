@@ -116,16 +116,17 @@ Runs embedded within the Next.js process. No external port, no remote connection
 - [x] **Red Team Probe Sequence:** Read-only self-probe (Probe → Assess → Verify) with streaming terminal output and AI synthesis.
 - [x] **Unit Test Suite:** Vitest suites — all offline, injectable dependencies. WAF patterns, probe logic, kinetic bridge, vault, alert IDs, Defense Log utils.
 - [x] **CI/CD:** GitHub Actions — Security Audit, ESLint, TypeScript strict check, and Vitest on every push to `main`.
-- [x] **Architecture & Security Docs:** `ARCHITECTURE_FLOWS.md` (8 Mermaid diagrams), `SECURITY_ADVISORY.md` (AEGIS-ADV-003), `TECHNICAL_ADVISORY.md`.
+- [x] **Architecture & Security Docs:** `docs/ARCHITECTURE_FLOWS.md` (8 Mermaid diagrams), `docs/SECURITY_ADVISORY.md` (AEGIS-ADV-003), `docs/TECHNICAL_ADVISORY.md`, `docs/OPERATIONS_RUNBOOK.md`.
 - [x] **Playwright e2e:** Console layout, Red Team PROBE/ASSESS/VERIFY flow, WAF toggle → badge change, Defense Log scan trigger.
 - [ ] **Auth hardening (optional):** Consider replacing HMAC session cookie with a lightweight provider (e.g. Clerk) if multi-user or SSO support is needed; current single-operator posture is sufficient for local node use.
 
 ---
 
 > [!TIP]
-> **Architecture & Security Context:** For runtime flow diagrams covering WAF enforcement, vault logging, the Kinetic HITL gate, and the Red Team probe sequence, see [ARCHITECTURE_FLOWS.md](./ARCHITECTURE_FLOWS.md).
-> For adversarial probe methodology, threat model, and control verification outcomes, see [SECURITY_ADVISORY.md](./SECURITY_ADVISORY.md) (AEGIS-ADV-003).
-> For engineering rationale behind the pfctl advisory model, WAF Edge Runtime constraints, and vault zero-vector fallback, see [TECHNICAL_ADVISORY.md](./TECHNICAL_ADVISORY.md).
+> **Architecture & Security Context:** For runtime flow diagrams covering WAF enforcement, vault logging, the Kinetic HITL gate, and the Red Team probe sequence, see [ARCHITECTURE_FLOWS.md](./docs/ARCHITECTURE_FLOWS.md).
+> For adversarial probe methodology, threat model, and control verification outcomes, see [SECURITY_ADVISORY.md](./docs/SECURITY_ADVISORY.md) (AEGIS-ADV-003).
+> For engineering rationale behind the pfctl advisory model, WAF Edge Runtime constraints, and vault zero-vector fallback, see [TECHNICAL_ADVISORY.md](./docs/TECHNICAL_ADVISORY.md).
+> For operational maintenance, common failure modes, and health semantics, see [OPERATIONS_RUNBOOK.md](./docs/OPERATIONS_RUNBOOK.md).
 
 ---
 
@@ -199,11 +200,11 @@ Aegis is validated across WAF enforcement, HITL safety, vault integrity, and red
 - **Ollama Offline Resilience:** Stop Ollama and click Scan Threats in the Defense Log.
   - **Expect:** The AI panel displays "AI Engine Offline — Ensure Ollama is running on Host" without crashing the component or the page.
 
-## ⚡ Red Team Validation
+## 🥊 Red Team Validation
 
 Aegis includes a built-in self-probe capability that runs a read-only Probe → Assess → Verify sequence against the local node. It verifies WAF coverage, auth boundary behavior, open ports, sensitive file exposure, and security header posture — then feeds all findings to the local Ollama instance for AI-driven risk summarization.
 
-See [`SECURITY_ADVISORY.md`](./SECURITY_ADVISORY.md) (AEGIS-ADV-003) for probe methodology, threat model, and control verification outcomes.
+See [`SECURITY_ADVISORY.md`](./docs/SECURITY_ADVISORY.md) (AEGIS-ADV-003) for probe methodology, threat model, and control verification outcomes.
 
 ---
 

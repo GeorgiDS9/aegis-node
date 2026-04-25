@@ -386,6 +386,7 @@ If a code change alters runtime behavior but this doc is not updated, treat that
 
 ## Suggested Companion Docs
 
-- `SECURITY_ADVISORY.md` (AEGIS-ADV-003) — Red team probe behaviors, threat model, and operational notes
-- `TECHNICAL_ADVISORY.md` — pfctl advisory model, WAF Edge Runtime constraints, and vault zero-vector fallback
-- `README.md` — High-level product narrative and setup instructions
+- [`SECURITY_ADVISORY.md`](./SECURITY_ADVISORY.md) (AEGIS-ADV-003) — Red team probe behaviors, threat model, and operational notes
+- [`TECHNICAL_ADVISORY.md`](./TECHNICAL_ADVISORY.md) — pfctl advisory model, WAF Edge Runtime constraints, and vault zero-vector fallback
+- [`README.md`](../README.md) — High-level product narrative and setup instructions
+- [`OPERATIONS_RUNBOOK.md`](./OPERATIONS_RUNBOOK.md) — Operational maintenance, common failure modes, and health semantics
